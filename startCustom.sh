@@ -40,13 +40,13 @@ while [ $# -gt 0 ]; do
         ARGS="$2"
         shift
       fi
-      if [ "$2" = "-n"]; then
+      if [ "$2" = "-n" ]; then
         NODE="-n $3"
         shift 2
       else
         NODE="-n $NODE_NAME"
       fi
-      if [ "$2" = "-j"]; then
+      if [ "$2" = "-j" ]; then
         DB_ARG="-j $3"
         shift 2
       else
