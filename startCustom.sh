@@ -15,7 +15,8 @@ MAIN_CLASS="com.highbyte.intelligencehub.runtime.Main"
 ARGS="start"
 NODE=""
 DB_ARG=""
-DB_ENDPOINT="jdbc:postgresql://pg:5432/dbName?user=postgres&password=password"
+DB_ENDPOINT="URI"
+NODE_NAME="node1Primary"
 
 echo "VIEW_INPUT: $@"
 
@@ -43,13 +44,13 @@ while [ $# -gt 0 ]; do
         NODE="-n $3"
         shift 2
       else
-        NODE="-n node1Primary"
+        NODE="-n $NODE_NAME"
       fi
       if [ "$2" = "-j"]; then
         DB_ARG="-j $3"
         shift 2
       else
-        DB_ARG="-j $DB_ENDPOINT"
+        DB_ARG="-j env:$DB_ENDPOINT"
       fi
       ;;
     *)
