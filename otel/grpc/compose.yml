@@ -1,0 +1,40 @@
+services:
+  testOtel:
+    image: highbyte:${IMAGE_VERSION}
+    container_name: testOtel
+    hostname: testOtel
+    ports:
+      - 45000:45245
+      - 45001:8885
+      - 45002:1885
+      - 45003:9001
+      - 45004:45345
+    volumes:
+      - testOtelVol:/usr/local/highbyte/appData
+    networks:
+      - demonet
+    environment:
+      - JDK_JAVA_OPTIONS="-javaagent:lib/opentelemetry-javaagent.jar"
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://lgtm:4317
+      - OTEL_SERVICE_NAME=HighByteIntelligenceHubTest
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_METRICS_EXPORTER=otlp
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_METRIC_EXPORT_INTERVAL=30000
+      - OTEL_TRACES_SAMPLER=always_off
+      - OTEL_INSTRUMENTATION_ENABLED=false
+      - OTEL_INSTRUMENTATION_RUNTIME_METRICS_ENABLED=true
+      - OTEL_INSTRUMENTATION_LOGBACK_APPENDER_ENABLED= "false"
+      - OTEL_INSTRUMENTATION_LOG4J_APPENDER_ENABLED= "false"
+      - OTEL_INSTRUMENTATION_JUL_APPENDER_ENABLED= "false"
+      - OTEL_INSTRUMENTATION_LOG4J_CONTEXT_DATA_ENABLED= "false"
+      - OTEL_JAVAAGENT_EXTENSIONS= "com.highbyte.intelligencehub.runtime.otel"
+      - OTEL_JAVAAGENT_LOGGING= "application"
+
+volumes:
+  testOtelVol:
+  
+networks:
+  demonet:
+    external: true
+    name: demonet
