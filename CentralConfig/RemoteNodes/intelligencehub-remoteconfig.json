@@ -1,0 +1,5 @@
+{
+  "remoteUrl": "ws://highbyteCentral:45245/websocket",
+  "token" : "{{INSERTTOKEN}}"
+}
+
