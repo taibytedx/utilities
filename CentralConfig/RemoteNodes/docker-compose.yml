@@ -1,0 +1,40 @@
+services:
+  highbyteEdgeNode1:
+    image: highbyte:${IMAGE_VERSION}
+    container_name: highbyteEdgeNode1
+    hostname: highbyteEdgeNode1
+    ports:
+      - 45010:45245
+      - 45011:8885
+      - 45012:1885
+      - 45013:9001
+    volumes:
+      - highbyteEdgeNode1Vol:/usr/local/highbyte/appData
+      - ./intelligencehub-remoteconfig.json:/usr/local/highbyte/appData/intelligencehub-remoteconfig.json:ro
+    networks:
+      - demonet
+
+  highbyteEdgeNode2:
+   
+   image: highbyte:${IMAGE_VERSION}
+   container_name: highbyteEdgeNode2
+   hostname: highbyteEdgeNode2
+   ports:
+     - 45020:45245
+     - 45021:8885
+     - 45022:1885
+     - 45023:9001
+   volumes:
+     - highbyteEdgeNode2Vol:/usr/local/highbyte/appData
+     - ./intelligencehub-remoteconfig.json:/usr/local/highbyte/appData/intelligencehub-remoteconfig.json:ro
+   networks:
+     - demonet   
+  
+volumes:
+  highbyteEdgeNode1Vol:
+  highbyteEdgeNode2Vol:
+  
+networks:
+  demonet:
+    external: true
+    name: demonet
