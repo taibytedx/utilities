@@ -4,7 +4,7 @@ services:
     container_name: highbyteCentral
     hostname: highbyteCentral
     ports:
-      - 45000:443
+      - 45000:45245
       - 45001:8885
       - 45002:1885
       - 45003:9001
