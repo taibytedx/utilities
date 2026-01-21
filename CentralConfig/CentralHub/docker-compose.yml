@@ -1,0 +1,22 @@
+services:
+  highbyteCentral:
+    image: highbyte:${IMAGE_VERSION}
+    container_name: highbyteCentral
+    hostname: highbyteCentral
+    ports:
+      - 45000:443
+      - 45001:8885
+      - 45002:1885
+      - 45003:9001
+    volumes:
+      - highbyteCentralVol:/usr/local/highbyte/appData
+    networks:
+      - demonet
+
+volumes:
+  highbyteCentralVol:
+  
+networks:
+  demonet:
+    external: true
+    name: demonet
