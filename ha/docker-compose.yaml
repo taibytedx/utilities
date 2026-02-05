@@ -1,0 +1,262 @@
+services:
+  halgtm:
+    image: grafana/otel-lgtm
+    container_name: halgtm
+    hostname: halgtm
+    ports:
+      - 3400:3000
+      - 4417:4317
+      - 4418:4318
+    networks:
+      - otelnet
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: hbhadb
+      POSTGRES_USER: highbyte
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5532:5432
+    volumes:
+      - hbhadb_postgres_data:/var/lib/postgresql
+#      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro  # Auto-creates tables on first run
+    networks:
+      - pgnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U highbyte -d hbhadb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  highbytePrimaryCreate:
+    image: highbyte:${IMAGE_VERSION}
+    container_name: highbytePrimaryCreate
+    hostname: highbytePrimaryCreate
+    volumes:
+      - highbytePrimaryVol:/usr/local/highbyte/appData
+      - highbyteSecondary1Vol:/usr/local/highbyte/appDataSecondary1
+      - highbyteSecondary2Vol:/usr/local/highbyte/appDataSecondary2
+    networks:
+      - pgnet
+    environment:
+      HIGHBYTE_STORE_PASSWORD: password
+    entrypoint: ["/bin/sh", "-c"]
+    command: 
+      - |
+        cd /usr/local/highbyte/runtime && \
+        export LD_PRELOAD=/lib/libgcompat.so.0 && \
+        echo "hello" && \
+        java -cp "intelligencehub-runtime.jar:lib/*" com.highbyte.intelligencehub.runtime.HAMain create -n node1Primary -j "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password" && \
+        while [ ! -f /usr/local/highbyte/appData/intelligencehub-certificatestore.pkcs12 ]; do echo "Waiting for certificatestore.pkcs12..."; sleep 1; done && \
+        cp /usr/local/highbyte/appData/intelligencehub-certificatestore.pkcs12 /usr/local/highbyte/appDataSecondary1/ && \
+        cp /usr/local/highbyte/appData/intelligencehub-certificatestore.pkcs12 /usr/local/highbyte/appDataSecondary2/ && \
+        echo "Primary node created and certs distributed successfully!" && \
+        exit 0
+# CHECK wait $!
+    depends_on:
+      postgres:
+        condition: service_healthy
+    
+  highbytePrimary:
+    image: highbyte:${IMAGE_VERSION}
+    container_name: highbytePrimary
+    hostname: highbytePrimary
+    ports:
+      - 48000:45245
+      - 48001:8885
+      - 48002:1885
+      - 48003:9001
+    volumes:
+      - highbytePrimaryVol:/usr/local/highbyte/appData
+    networks:
+      - pgnet
+      - otelnet
+      - mqttnet
+    environment:
+      JAVA_OPTS: >-
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:+CrashOnOutOfMemoryError
+        -javaagent:lib/opentelemetry-javaagent.jar
+        -Dotel.exporter.otlp.endpoint=http://halgtm:4318
+        -Dotel.service.name=HighByteIntelligenceHuPrimaryNode
+        -Dotel.exporter.otlp.protocol=http/protobuf
+        -Dotel.metrics.exporter=otlp
+        -Dotel.logs.exporter=otlp
+        -Dotel.metrics.exporter.interval=30000
+        -Dotel.traces.sampler=always_off
+        -Dotel.instrumentation.enabled=false
+        -Dotel.instrumentation.runtime-metrics.enabled=true
+        -Dotel.instrumentation.logback-appender.enabled=false
+        -Dotel.instrumentation.log4j-appender.enabled=false
+        -Dotel.instrumentation.jul-appender.enabled=false
+        -Dotel.instrumentation.log4j-context-data.enabled=false
+        -Dotel.javaagent.extensions=com.highbyte.intelligencehub.runtime.otel
+        -Dotel.javaagent.logging=application
+      PUBLIC_hostname: highbytePrimary
+      HIGHBYTE_STORE_PASSWORD: password
+      URI: "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        cd /usr/local/highbyte/runtime && \
+        export LD_PRELOAD=/lib/libgcompat.so.0 && \
+        export TIMESTAMP=$$(date +%Y%m%d_%H%M%S) && \
+        exec java $$JAVA_OPTS \
+        "-XX:HeapDumpPath=$${DUMP_PATH}/hd_$${TIMESTAMP}-%p.hprof" \
+        "-XX:ErrorFile=$${DUMP_PATH}/hs_$${TIMESTAMP}-%p.log" \
+        -cp "intelligencehub-runtime.jar:lib/*" \
+        com.highbyte.intelligencehub.runtime.HAMain start -n node1Primary -j "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password"; \
+    depends_on:
+      highbytePrimaryCreate:
+        condition: service_completed_successfully
+
+  highbyteSecondaryNode1:
+    image: highbyte:${IMAGE_VERSION}
+    container_name: highbyteSecondaryNode1
+    hostname: highbyteSecondaryNode1
+    ports:
+      - 48010:45245
+      - 48011:8885
+      - 48012:1885
+      - 48013:9001
+    volumes:
+      - highbyteSecondary1Vol:/usr/local/highbyte/appData
+    networks:
+      - pgnet
+      - otelnet
+      - mqttnet
+    environment:
+      JAVA_OPTS: >-
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:+CrashOnOutOfMemoryError
+        -javaagent:lib/opentelemetry-javaagent.jar
+        -Dotel.exporter.otlp.endpoint=http://halgtm:4318
+        -Dotel.service.name=HighByteIntelligenceHuSecondaryNode1
+        -Dotel.exporter.otlp.protocol=http/protobuf
+        -Dotel.metrics.exporter=otlp
+        -Dotel.logs.exporter=otlp
+        -Dotel.metrics.exporter.interval=30000
+        -Dotel.traces.sampler=always_off
+        -Dotel.instrumentation.enabled=false
+        -Dotel.instrumentation.runtime-metrics.enabled=true
+        -Dotel.instrumentation.logback-appender.enabled=false
+        -Dotel.instrumentation.log4j-appender.enabled=false
+        -Dotel.instrumentation.jul-appender.enabled=false
+        -Dotel.instrumentation.log4j-context-data.enabled=false
+        -Dotel.javaagent.extensions=com.highbyte.intelligencehub.runtime.otel
+        -Dotel.javaagent.logging=application
+      PUBLIC_hostname: highbyteSecondaryNode1
+      HIGHBYTE_STORE_PASSWORD: password
+      URI: "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        cd /usr/local/highbyte/runtime && \
+        export LD_PRELOAD=/lib/libgcompat.so.0 && \
+        export TIMESTAMP=$$(date +%Y%m%d_%H%M%S) && \
+        exec java $$JAVA_OPTS \
+        "-XX:HeapDumpPath=$${DUMP_PATH}/hd_$${TIMESTAMP}-%p.hprof" \
+        "-XX:ErrorFile=$${DUMP_PATH}/hs_$${TIMESTAMP}-%p.log" \
+        -cp "intelligencehub-runtime.jar:lib/*" \
+        com.highbyte.intelligencehub.runtime.HAMain start -n node1Secondary -j "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password"; \
+    depends_on:
+      highbytePrimaryCreate:
+        condition: service_completed_successfully
+
+  highbyteSecondaryNode2:
+    image: highbyte:${IMAGE_VERSION}
+    container_name: highbyteSecondaryNode2
+    hostname: highbyteSecondaryNode2
+    ports:
+      - 48020:45245
+      - 48021:8885
+      - 48022:1885
+      - 48023:9001
+    volumes:
+      - highbyteSecondary2Vol:/usr/local/highbyte/appData
+    networks:
+      - pgnet
+      - otelnet
+      - mqttnet
+    environment:
+      JAVA_OPTS: >-
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:+CrashOnOutOfMemoryError
+        -javaagent:lib/opentelemetry-javaagent.jar
+        -Dotel.exporter.otlp.endpoint=http://halgtm:4318
+        -Dotel.service.name=HighByteIntelligenceHuSecondaryNode2
+        -Dotel.exporter.otlp.protocol=http/protobuf
+        -Dotel.metrics.exporter=otlp
+        -Dotel.logs.exporter=otlp
+        -Dotel.metrics.exporter.interval=30000
+        -Dotel.traces.sampler=always_off
+        -Dotel.instrumentation.enabled=false
+        -Dotel.instrumentation.runtime-metrics.enabled=true
+        -Dotel.instrumentation.logback-appender.enabled=false
+        -Dotel.instrumentation.log4j-appender.enabled=false
+        -Dotel.instrumentation.jul-appender.enabled=false
+        -Dotel.instrumentation.log4j-context-data.enabled=false
+        -Dotel.javaagent.extensions=com.highbyte.intelligencehub.runtime.otel
+        -Dotel.javaagent.logging=application
+      PUBLIC_hostname: highbyteSecondaryNode2
+      HIGHBYTE_STORE_PASSWORD: password
+      URI: "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        cd /usr/local/highbyte/runtime && \
+        export LD_PRELOAD=/lib/libgcompat.so.0 && \
+        export TIMESTAMP=$$(date +%Y%m%d_%H%M%S) && \
+        exec java $$JAVA_OPTS \
+        "-XX:HeapDumpPath=$${DUMP_PATH}/hd_$${TIMESTAMP}-%p.hprof" \
+        "-XX:ErrorFile=$${DUMP_PATH}/hs_$${TIMESTAMP}-%p.log" \
+        -cp "intelligencehub-runtime.jar:lib/*" \
+        com.highbyte.intelligencehub.runtime.HAMain start -n node2Secondary -j "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password"; \
+    depends_on:
+      highbytePrimaryCreate:
+        condition: service_completed_successfully
+
+  highbyteMqtt:
+    image: highbyte:${IMAGE_VERSION}
+    container_name: highbyteMqtt
+    hostname: highbyteMqtt
+    ports:
+      - 48030:45245
+      - 48032:1885
+    networks:
+      - mqttnet
+    environment:
+      JAVA_OPTS: >-
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:+CrashOnOutOfMemoryError
+        -javaagent:lib/opentelemetry-javaagent.jar
+        -Dotel.exporter.otlp.endpoint=http://halgtm:4318
+        -Dotel.service.name=HighByteIntelligenceHubMqtt
+        -Dotel.exporter.otlp.protocol=http/protobuf
+        -Dotel.metrics.exporter=otlp
+        -Dotel.logs.exporter=otlp
+        -Dotel.metrics.exporter.interval=30000
+        -Dotel.traces.sampler=always_off
+        -Dotel.instrumentation.enabled=false
+        -Dotel.instrumentation.runtime-metrics.enabled=true
+        -Dotel.instrumentation.logback-appender.enabled=false
+        -Dotel.instrumentation.log4j-appender.enabled=false
+        -Dotel.instrumentation.jul-appender.enabled=false
+        -Dotel.instrumentation.log4j-context-data.enabled=false
+        -Dotel.javaagent.extensions=com.highbyte.intelligencehub.runtime.otel
+        -Dotel.javaagent.logging=application
+
+volumes:
+  hbhadb_postgres_data:
+  highbytePrimaryVol:
+  highbyteSecondary1Vol:
+  highbyteSecondary2Vol:
+  
+networks:
+  pgnet:
+    name: pgnet
+  otelnet:
+    name: otelnet
+  mqttnet:
+    name: mqttnet
