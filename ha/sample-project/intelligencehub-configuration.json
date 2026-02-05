@@ -1,0 +1,232 @@
+{
+	"productInfo": {
+		"company": "HighByte",
+		"product": "IntelligenceHub",
+		"version": "4.3.3",
+		"build": "2026.1.5.1",
+		"stage": "Release"
+	},
+	"project": {
+		"version": 12,
+		"connections": [
+			{
+				"name": "highbyteMqtt",
+				"uri": "mqtt://highbyteMqtt:1885",
+				"tags": [],
+				"writes": {
+					"flattenModeledValues": false
+				},
+				"subscriptions": {},
+				"storeForward": {
+					"enabled": false,
+					"maxEntries": 100,
+					"waitOnFailureInterval": {
+						"duration": 1,
+						"units": "Seconds"
+					}
+				},
+				"settings": {
+					"connectionTimeoutSeconds": 10,
+					"keepAliveSeconds": 60,
+					"requestTimeoutMS": 5000,
+					"maxInflight": 1000,
+					"cleanSession": true,
+					"mcpEnabled": "disabled",
+					"ssl": false,
+					"redundantBrokers": [],
+					"inputDiscovery": ""
+				}
+			}
+		],
+		"inputs": [],
+		"outputs": [],
+		"modeling": {
+			"models": [
+				{
+					"name": "FailOverLatency",
+					"tags": [],
+					"attributes": [
+						{
+							"attributeType": "Internal",
+							"name": "random",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": "Any"
+						},
+						{
+							"attributeType": "Internal",
+							"name": "initialValue",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": "Any"
+						},
+						{
+							"attributeType": "Internal",
+							"name": "timestamp",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": "Any"
+						},
+						{
+							"attributeType": "Internal",
+							"name": "nodeNumber",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": "Any"
+						},
+						{
+							"attributeType": "Internal",
+							"name": "counter",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": "Any"
+						}
+					]
+				}
+			],
+			"instances": []
+		},
+		"conditions": [],
+		"functions": [],
+		"tags": [],
+		"pipelines": [
+			{
+				"name": "TestOutput",
+				"tags": [],
+				"inputStages": [
+					"JavaScript"
+				],
+				"stages": [
+					{
+						"name": "WriteNew",
+						"display": {
+							"position": {
+								"x": 869,
+								"y": 2
+							}
+						},
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.highbyteMqtt}}",
+							"qualifier": {
+								"topic": "{{System.Environment.PUBLIC_hostname}}",
+								"qos": 0,
+								"namedRoot": false,
+								"retained": false,
+								"breakupArrays": false
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "Model",
+						"display": {
+							"position": {
+								"x": 330,
+								"y": 11
+							}
+						},
+						"config": {
+							"type": ".ModelConfig",
+							"model": "FailOverLatency",
+							"objectName": "",
+							"initExpression": "",
+							"attributes": [
+								{
+									"name": "random",
+									"expression": {
+										"type": "JavaScript",
+										"expression": "const min = 0;\r\nconst max = 10;\r\nreturn Math.floor(Math.random() * (max - min + 1)) + min;"
+									}
+								},
+								{
+									"name": "initialValue",
+									"expression": {
+										"type": "JavaScript",
+										"expression": "return event.metadata.startingCount;"
+									}
+								},
+								{
+									"name": "timestamp",
+									"expression": {
+										"type": "JavaScript",
+										"expression": "return System.Internal.DateTime;"
+									}
+								},
+								{
+									"name": "nodeNumber",
+									"expression": {
+										"type": "JavaScript",
+										"expression": "return System.Environment.PUBLIC_hostname;"
+									}
+								},
+								{
+									"name": "counter",
+									"expression": {
+										"type": "JavaScript",
+										"expression": "return event.value;"
+									}
+								}
+							]
+						},
+						"outputs": [
+							"WriteNew"
+						]
+					},
+					{
+						"name": "JavaScript",
+						"display": {
+							"position": {
+								"x": 143,
+								"y": 177
+							}
+						},
+						"config": {
+							"type": ".JavaScriptTransformConfig",
+							"transformExpression": "const counter = state.pipeline.get(\"counter\",0);\r\nstate.pipeline.set(\"counter\",counter+1);\r\n\r\nconst cachedHostname = state.pipeline.get(\"hostname\",\"\");\r\nconst currentHostname = System.Environment.PUBLIC_hostname;\r\nif (cachedHostname != currentHostname ){\r\n    // update current hostname\r\n    state.pipeline.set(\"hostname\",currentHostname);\r\n    // store initial count after failover\r\n    state.pipeline.set(\"startingCount\",counter);\r\n}\r\n// get stored initial count\r\nconst startingCount = state.pipeline.get(\"startingCount\",0);\r\n\r\nstage.setValue(counter);\r\nstage.setMetadata(\"startingCount\",startingCount);"
+						},
+						"outputs": [
+							"Model"
+						]
+					}
+				],
+				"trackActivity": false,
+				"triggers": [
+					{
+						"name": "PolledTrigger",
+						"display": {
+							"position": {
+								"x": -409,
+								"y": 25
+							}
+						},
+						"config": {
+							"type": ".TriggerPolled",
+							"enabled": true,
+							"interval": {
+								"duration": 1,
+								"units": "Seconds"
+							}
+						}
+					}
+				],
+				"errorHandler": {
+					"type": "default"
+				}
+			}
+		],
+		"namespace": []
+	},
+	"network": {
+		"groups": [],
+		"hubs": []
+	}
+}
