@@ -1,0 +1,161 @@
+{
+  "productInfo" : {
+    "company" : "HighByte",
+    "product" : "IntelligenceHub",
+    "version" : "4.3.3",
+    "build" : "2026.1.5.1",
+    "stage" : "Release"
+  },
+  "project" : {
+    "version" : 12,
+    "connections" : [ ],
+    "conditions" : [ ],
+    "inputs" : [ ],
+    "outputs" : [ ],
+    "modeling" : {
+      "models" : [ ],
+      "instances" : [ ]
+    },
+    "pipelines" : [ ],
+    "tags" : [ ],
+    "functions" : [ ],
+    "namespace" : [ ]
+  },
+  "network" : {
+    "version" : 0,
+    "groups" : [ ],
+    "hubs" : [ ]
+  },
+  "accessControl" : {
+    "apiKeys" : [ ],
+    "version" : 0,
+    "roles" : [ {
+      "name" : "admin",
+      "policyVersion" : 1,
+      "claims" : [ {
+        "resources" : [ "*" ],
+        "actions" : [ "*" ]
+      } ]
+    }, {
+      "name" : "default",
+      "policyVersion" : 1,
+      "claims" : [ {
+        "resources" : [ "*" ],
+        "actions" : [ "read" ]
+      }, {
+        "resources" : [ "connection", "instance", "pipeline" ],
+        "actions" : [ "*" ]
+      } ]
+    } ],
+    "users" : [ {
+      "name" : "administrator",
+      "credentials" : {
+        "salt" : "jeq1e0F0sDVw2l4JekMwng==",
+        "hashedPassword" : "h/9c4/sBvKsi3r3Sf+gmvrprHQmQj7xeyJQOFBgROhVIXmi4nqOFHR2vs5gF7FPoZJMfJcCpYCp1SJZCGpXmOA=="
+      },
+      "policyVersion" : 1,
+      "roles" : [ "admin" ],
+      "claims" : [ ]
+    } ]
+  },
+  "system" : {
+    "version" : 0,
+    "variables" : [ {
+      "name" : "deployment",
+      "value" : "git"
+    } ],
+    "secrets" : [ ],
+    "certificates" : [ ],
+    "settings" : {
+      "version" : 0,
+      "directories" : { },
+      "api" : {
+        "sessionTimeout" : {
+          "duration" : 8,
+          "units" : "Hours"
+        },
+        "authenticationPreference" : "STAY_LOGGED_IN"
+      },
+      "configuration" : {
+        "scheme" : "http",
+        "schemeCertificate" : "ssl-certificate-private-key",
+        "port" : 45245,
+        "centralConfig" : false,
+        "autoSaveIntervalSeconds" : 60,
+        "backupCopies" : 50
+      },
+      "hbMqttBroker" : {
+        "enabled" : false,
+        "allowAnonymous" : true,
+        "endpoints" : [ {
+          "hostname" : "0.0.0.0",
+          "port" : 1885,
+          "useSSL" : false,
+          "certificateKeyAlias" : "",
+          "protocol" : "mqtt.tcp"
+        }, {
+          "hostname" : "0.0.0.0",
+          "port" : 1886,
+          "useSSL" : false,
+          "certificateKeyAlias" : "",
+          "protocol" : "mqtt.ws"
+        } ]
+      },
+      "restDataServer" : {
+        "enabled" : false,
+        "hostname" : "0.0.0.0",
+        "port" : 8885,
+        "useHttps" : false,
+        "schemeCertificate" : "",
+        "allowAnonymous" : false,
+        "authenticationModes" : [ "API_KEY" ],
+        "mcpServerEnabled" : false,
+        "mcpServerPort" : 45345,
+        "mcpConfigTools" : "disabled"
+      },
+      "log" : {
+        "debugLogging" : "NONE",
+        "fileSizeMB" : 100,
+        "logAuditEvents" : false
+      },
+      "redundancy" : {
+        "backup" : {
+          "enabled" : false,
+          "primary" : {
+            "uri" : "",
+            "pingIntervalSeconds" : 10,
+            "pingAttempts" : 1
+          }
+        }
+      },
+      "expressionEngine" : {
+        "allowExpressionEval" : false,
+        "allowEnvironmentVariables" : false,
+        "expressionEngineTimeoutSeconds" : 10,
+        "hubBindingName" : "hub",
+        "allowExpressionImports" : false
+      },
+      "backup" : {
+        "mode" : "disabled",
+        "cronSchedule" : "0 3 * * *",
+        "repo" : {
+          "type" : "git",
+          "name" : "HubBackup",
+          "uri" : "",
+          "author" : "HighByte IntelligenceHub",
+          "email" : "<>",
+          "auth" : {
+            "type" : "none"
+          }
+        },
+        "branch" : "highbyte-backup",
+        "deployFile" : "intelligencehub-deployment.json"
+      }
+    }
+  },
+  "remoteConfig" : {
+    "remoteUrl" : "ws://highbyteCentralNode:45245/websocket",
+    "token" : "highbyte"
+  },
+  "identityProviders" : { }
+}
