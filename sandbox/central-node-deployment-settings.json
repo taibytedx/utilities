@@ -1,0 +1,35 @@
+{
+    "version": 0,
+    "repos": [
+        {
+            "type": "git",
+            "uri": "https://github.com/taibytedx/utilities.git",
+            "name": "default",
+            "author": "sandboxauthor",
+            "email": "sandbox@sandbox.com",
+            "auth": {
+                "type": "pass",
+                "password": "INSERTOKEN",
+                "username": "sandboxuser"
+            }
+        }
+    ],
+    "fragments": [
+        {
+            "details": {
+                "type": "git",
+                "deployFile": "sandbox/central-node-deployment.json",
+                "repoName": "default",
+                "ref": "main"
+            },
+            "keyPaths": []
+        },
+        {
+            "details": {
+                "type": "file",
+                "deployFile": "/usr/local/highbyte/deployments/default-deployment.json"
+            },
+            "keyPaths": []
+        }
+    ]
+}
