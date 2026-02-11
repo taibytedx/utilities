@@ -1,0 +1,122 @@
+services:
+  highbyteCentralNode:
+    image: highbyte:${IMAGE_VERSION}
+    #container_name: highbyteCentralNode
+    hostname: highbyteCentralNode
+    ports:
+      - 45500:45245
+      - 45501:8885
+      - 45502:1885
+      - 45503:9001
+    volumes:
+      - highbyteCentralNodeVol:/usr/local/highbyte/appData
+      - ./central-node-deployment-settings.json:/usr/local/highbyte/deployments/deployment-settings.json:ro
+      - ./central-node-deployment-configuration.json:/usr/local/highbyte/deployments/default-deployment.json:ro
+    networks:
+      - pgnet
+      - otelnet
+      - mqttnet
+    environment:
+      JAVA_OPTS: >-
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:+CrashOnOutOfMemoryError
+        -javaagent:lib/opentelemetry-javaagent.jar
+        -Dotel.exporter.otlp.endpoint=http://lgtm:4318
+        -Dotel.service.name=HighByteIntelligenceHubCentralNode
+        -Dotel.exporter.otlp.protocol=http/protobuf
+        -Dotel.metrics.exporter=otlp
+        -Dotel.logs.exporter=otlp
+        -Dotel.metrics.exporter.interval=30000
+        -Dotel.traces.sampler=always_off
+        -Dotel.instrumentation.enabled=false
+        -Dotel.instrumentation.runtime-metrics.enabled=true
+        -Dotel.instrumentation.logback-appender.enabled=false
+        -Dotel.instrumentation.log4j-appender.enabled=false
+        -Dotel.instrumentation.jul-appender.enabled=false
+        -Dotel.instrumentation.log4j-context-data.enabled=false
+        -Dotel.javaagent.extensions=com.highbyte.intelligencehub.runtime.otel
+        -Dotel.javaagent.logging=application
+      PUBLIC_hostname: highbyteCentralNode
+      HIGHBYTE_STORE_PASSWORD: password
+      HIGHBYTE_DEPLOYMENT_FILE: /usr/local/highbyte/deployments/deployment-settings.json
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        printenv && \
+        cd /usr/local/highbyte/runtime && \
+        export LD_PRELOAD=/lib/libgcompat.so.0 && \
+        export TIMESTAMP=$$(date +%Y%m%d_%H%M%S) && \
+        exec java $$JAVA_OPTS \
+        "-XX:HeapDumpPath=$${DUMP_PATH}/hd_$${TIMESTAMP}-%p.hprof" \
+        "-XX:ErrorFile=$${DUMP_PATH}/hs_$${TIMESTAMP}-%p.log" \
+        -cp "intelligencehub-runtime.jar:lib/*" \
+        com.highbyte.intelligencehub.runtime.Main start
+
+    
+  highbyteRemoteNode1:
+    image: highbyte:${IMAGE_VERSION}
+#    container_name: highbyteRemoteNode1
+    hostname: highbyteRemoteNode1
+    ports:
+      - 45510:45245
+      - 45511:8885
+      - 45512:1885
+      - 45513:9001
+    volumes:
+      - highbyteRemoteNode1Vol:/usr/local/highbyte/appData
+      - ./remote-node-deployment-settings.json:/usr/local/highbyte/deployments/deployment-settings.json:ro
+      - ./remote-node-deployment-configuration.json:/usr/local/highbyte/deployments/default-deployment.json:ro
+    networks:
+      - pgnet
+      - otelnet
+      - mqttnet
+    environment:
+      JAVA_OPTS: >-
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:+CrashOnOutOfMemoryError
+        -javaagent:lib/opentelemetry-javaagent.jar
+        -Dotel.exporter.otlp.endpoint=http://lgtm:4318
+        -Dotel.service.name=HighByteIntelligenceHubRemoteNode1
+        -Dotel.exporter.otlp.protocol=http/protobuf
+        -Dotel.metrics.exporter=otlp
+        -Dotel.logs.exporter=otlp
+        -Dotel.metrics.exporter.interval=30000
+        -Dotel.traces.sampler=always_off
+        -Dotel.instrumentation.enabled=false
+        -Dotel.instrumentation.runtime-metrics.enabled=true
+        -Dotel.instrumentation.logback-appender.enabled=false
+        -Dotel.instrumentation.log4j-appender.enabled=false
+        -Dotel.instrumentation.jul-appender.enabled=false
+        -Dotel.instrumentation.log4j-context-data.enabled=false
+        -Dotel.javaagent.extensions=com.highbyte.intelligencehub.runtime.otel
+        -Dotel.javaagent.logging=application
+      PUBLIC_hostname: highbyteRemoteNode1
+      HIGHBYTE_STORE_PASSWORD: password
+      HIGHBYTE_DEPLOYMENT_FILE: /usr/local/highbyte/deployments/deployment-settings.json
+#      URI: "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        printenv && \
+        cd /usr/local/highbyte/runtime && \
+        export LD_PRELOAD=/lib/libgcompat.so.0 && \
+        export TIMESTAMP=$$(date +%Y%m%d_%H%M%S) && \
+        exec java $$JAVA_OPTS \
+        "-XX:HeapDumpPath=$${DUMP_PATH}/hd_$${TIMESTAMP}-%p.hprof" \
+        "-XX:ErrorFile=$${DUMP_PATH}/hs_$${TIMESTAMP}-%p.log" \
+        -cp "intelligencehub-runtime.jar:lib/*" \
+        com.highbyte.intelligencehub.runtime.Main start
+
+volumes:
+  sandbox_postgres_data:
+  highbyteCentralNodeVol:
+  highbyteRemoteNode1Vol:
+  highbyteRemoteNode2Vol:
+  
+networks:
+  pgnet:
+    name: pgnet
+  otelnet:
+    name: otelnet
+  mqttnet:
+    name: mqttnet
