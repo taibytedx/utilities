@@ -11,7 +11,7 @@ services:
     volumes:
       - highbyteCentralNodeVol:/usr/local/highbyte/appData
       - ./central-node-deployment-settings.json:/usr/local/highbyte/deployments/deployment-settings.json:ro
-      - ./central-node-deployment-configuration.json:/usr/local/highbyte/deployments/default-deployment.json:ro
+      - ./central-node-deployment-config.json:/usr/local/highbyte/deployments/default-deployment.json:ro
     networks:
       - pgnet
       - otelnet
@@ -65,7 +65,7 @@ services:
     volumes:
       - highbyteRemoteNode1Vol:/usr/local/highbyte/appData
       - ./remote-node-deployment-settings.json:/usr/local/highbyte/deployments/deployment-settings.json:ro
-      - ./remote-node-deployment-configuration.json:/usr/local/highbyte/deployments/default-deployment.json:ro
+      - ./remote-node-deployment-config.json:/usr/local/highbyte/deployments/default-deployment.json:ro
     networks:
       - pgnet
       - otelnet
