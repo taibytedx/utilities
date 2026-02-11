@@ -18,7 +18,7 @@
         {
             "details": {
                 "type": "git",
-                "deployFile": "sandbox/remote-node-deployment.json",
+                "deployFile": "sandbox/remote-node-deployment-config.json",
                 "repoName": "default",
                 "ref": "main"
             },
