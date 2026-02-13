@@ -27,7 +27,7 @@
         {
             "details": {
                 "type": "file",
-                "deployFile": "/usr/local/highbyte/deployments/default-deployment.json"
+                "deployFile": "/usr/local/highbyte/deployments/default-deployment-config.json"
             },
             "keyPaths": []
         }
