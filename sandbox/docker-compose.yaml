@@ -9,6 +9,7 @@ services:
       - 45582:4318
     networks:
       - otelnet
+
   highbyteCentralNode:
     image: highbyte:${IMAGE_VERSION}
     #container_name: highbyteCentralNode
@@ -21,7 +22,7 @@ services:
     volumes:
       - highbyteCentralNodeVol:/usr/local/highbyte/appData
       - ./central-node-deployment-settings.json:/usr/local/highbyte/deployments/deployment-settings.json:ro
-      - ./central-node-deployment-configuration.json:/usr/local/highbyte/deployments/default-deployment-config.json:ro
+      - ./central-node-deployment-config.json:/usr/local/highbyte/deployments/default-deployment-config.json:ro
     networks:
       - pgnet
       - otelnet
@@ -75,7 +76,7 @@ services:
     volumes:
       - highbyteRemoteNode1Vol:/usr/local/highbyte/appData
       - ./remote-node-deployment-settings.json:/usr/local/highbyte/deployments/deployment-settings.json:ro
-      - ./remote-node-deployment-configuration.json:/usr/local/highbyte/deployments/default-deployment-config.json:ro
+      - ./remote-node-deployment-config.json:/usr/local/highbyte/deployments/default-deployment-config.json:ro
     networks:
       - pgnet
       - otelnet
