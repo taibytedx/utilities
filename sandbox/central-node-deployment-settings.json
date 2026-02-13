@@ -9,7 +9,7 @@
             "email": "sandbox@sandbox.com",
             "auth": {
                 "type": "pass",
-                "password": "INSERTOKEN",
+                "password": "INSERTTOKEN",
                 "username": "sandboxuser"
             }
         }
@@ -27,7 +27,7 @@
         {
             "details": {
                 "type": "file",
-                "deployFile": "/usr/local/highbyte/deployments/default-deployment.json"
+                "deployFile": "/usr/local/highbyte/deployments/default-deployment-config.json"
             },
             "keyPaths": []
         }
