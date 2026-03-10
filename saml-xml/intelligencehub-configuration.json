@@ -1,0 +1,186 @@
+{
+	"productInfo": {
+		"company": "HighByte",
+		"product": "IntelligenceHub",
+		"version": "4.3.3",
+		"build": "2026.1.5.1",
+		"stage": "Release"
+	},
+	"project": {
+		"version": 12,
+		"connections": [
+			{
+				"name": "Read_Identity_Providers",
+				"uri": "file://ReadIdentityProviders",
+				"tags": [
+					"GenerateSamlXml"
+				],
+				"writes": {
+					"flattenModeledValues": false
+				},
+				"subscriptions": {},
+				"storeForward": {
+					"enabled": false,
+					"maxEntries": 100,
+					"waitOnFailureInterval": {
+						"duration": 1,
+						"units": "Seconds"
+					}
+				},
+				"settings": {
+					"communicationProtocol": {
+						"type": "FILE_PROTOCOL",
+						"options": {}
+					},
+					"directory": ".."
+				}
+			}
+		],
+		"inputs": [
+			{
+				"name": "intelligencehub_identityproviders_json",
+				"connection": "Read_Identity_Providers",
+				"type": "file",
+				"qualifier": {
+					"type": "File",
+					"searchType": "filePathSearch",
+					"encoding": "UTF_8",
+					"path": "appData/intelligencehub-identityproviders.json",
+					"indexFile": false,
+					"includeMetadata": true,
+					"timeFilterType": "None",
+					"regex": "(.+)"
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"parameters": {
+					"type": "EmptyParameters"
+				}
+			}
+		],
+		"outputs": [
+			{
+				"name": "SAML_SP_XML_Metadata",
+				"connection": "Read_Identity_Providers",
+				"type": "file",
+				"qualifier": {
+					"breakupArrays": false,
+					"fileName": "intelligencehub-SAML-XML-Metadata.xml",
+					"relativePath": "FileOutput"
+				}
+			}
+		],
+		"modeling": {
+			"models": [],
+			"instances": []
+		},
+		"conditions": [],
+		"functions": [],
+		"tags": [
+			{
+				"name": "GenerateSamlXml",
+				"description": "Generate SAML SP XML Metadata for importing into external IdP. Execute the Pipeline \"Generate_SAML_SP_XML_Metadata_Pipeline with a Test Write to generate the XML file in the FileOutput folder adjacent to the /appData folder."
+			}
+		],
+		"pipelines": [
+			{
+				"name": "Generate_SAML_SP_XML_Metadata_Pipeline",
+				"tags": [
+					"GenerateSamlXml"
+				],
+				"inputStages": [
+					"ReadIdentityProviders"
+				],
+				"stages": [
+					{
+						"name": "SampleIdentityProviders",
+						"display": {
+							"position": {
+								"x": 240,
+								"y": -135
+							}
+						},
+						"config": {
+							"type": ".JavaScriptTransformConfig",
+							"transformExpression": "const sample = {\r\n  \"authentication\": {\r\n    \"providers\": [\"saml2\", \"internal\"],\r\n    \"saml2\": {\r\n      \"sp.nameidformat\": \"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress\",\r\n      \"sp.entityid\": \"urn:example:sp:entity-id\",\r\n      \"sp.assertion_consumer_service.url\": \"http://localhost:45245/config/login/idp\",\r\n\r\n      \"idp.entityid\": \"https://idp.example.com/metadata\",\r\n      \"idp.single_sign_on_service.url\": \"https://idp.example.com/sso/saml\",\r\n      \"idp.single_sign_on_service.binding\": \"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\",\r\n\r\n      \"security.signature_algorithm\": \"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256\",\r\n      \"security.digest_algorithm\": \"http://www.w3.org/2001/04/xmlenc#sha256\",\r\n      \"security.requested_authncontext\": \"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport\",\r\n      \"security.want_assertions_signed\": \"true\",\r\n      \"security.authnrequest_signed\": \"true\",\r\n      \"security.want_assertions_encrypted\": \"true\",\r\n\r\n      \"idp.x509cert\": \"idp_cert_alias_or_placeholder\",\r\n      \"sp.x509cert\": \"sp_cert_2024\",\r\n      \"sp.privatekey\": \"sp_cert_2024\",\r\n      \"custom.roleNameAttribute\": \"roles\"\r\n    }\r\n  }\r\n};\r\nevent.value.value = JSON.stringify(sample);\r\nstage.setValue(event.value);"
+						},
+						"outputs": [
+							"GenerateXml"
+						]
+					},
+					{
+						"name": "CreateXml",
+						"display": {
+							"position": {
+								"x": 1140,
+								"y": -67
+							}
+						},
+						"config": {
+							"type": ".WriteConfig",
+							"failureOutputs": [],
+							"references": [
+								"{{Connection.Read_Identity_Providers.SAML_SP_XML_Metadata}}"
+							],
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "GenerateXml",
+						"display": {
+							"position": {
+								"x": 690,
+								"y": -67
+							}
+						},
+						"config": {
+							"type": ".JavaScriptTransformConfig",
+							"transformExpression": "function generateKeyDescriptors(saml) {\r\n  const authnSigned = saml[\"security.authnrequest_signed\"] === \"true\";\r\n  const wantEncrypted = saml[\"security.want_assertions_encrypted\"] === \"true\";\r\n\r\n  if (!authnSigned && !wantEncrypted) return \"\";\r\n\r\n  const signingCert = saml[\"sp.privatekey\"] || \"sp-signing\";\r\n  const encCert = saml[\"sp.x509cert\"] || \"sp-encryption\";\r\n\r\n  // Same cert? → Single KeyDescriptor (no use)\r\n  if (signingCert === encCert) {\r\n    return `<md:KeyDescriptor>\r\n      <ds:KeyInfo xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\">\r\n        <ds:X509Data>\r\n          <ds:X509Certificate>REPLACE_WITH_${signingCert}_CERT</ds:X509Certificate>\r\n        </ds:X509Data>\r\n      </ds:KeyInfo>\r\n    </md:KeyDescriptor>`;\r\n  }\r\n\r\n  // Different certs → Two KeyDescriptors\r\n  let keys = \"\";\r\n  if (authnSigned) {\r\n    keys += `<md:KeyDescriptor use=\"signing\">\r\n      <ds:KeyInfo xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\">\r\n        <ds:X509Data>\r\n          <ds:X509Certificate>REPLACE_WITH_${signingCert}_CERT</ds:X509Certificate>\r\n        </ds:X509Data>\r\n      </ds:KeyInfo>\r\n    </md:KeyDescriptor>`;\r\n  }\r\n  if (wantEncrypted) {\r\n    keys += `<md:KeyDescriptor use=\"encryption\">\r\n      <ds:KeyInfo xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\">\r\n        <ds:X509Data>\r\n          <ds:X509Certificate>REPLACE_WITH_${encCert}_CERT</ds:X509Certificate>\r\n        </ds:X509Data>\r\n      </ds:KeyInfo>\r\n    </md:KeyDescriptor>`;\r\n  }\r\n  return keys;\r\n}\r\n\r\nfunction generateSamlMetadataXml(jsonString) {\r\n  const config = JSON.parse(jsonString);\r\n  const saml = config.authentication.saml2;\r\n\r\n  const entityId = saml[\"sp.entityid\"];\r\n  const nameIdFormat = saml[\"sp.nameidformat\"];\r\n  const acsUrl = saml[\"sp.assertion_consumer_service.url\"];\r\n  const authnSigned = saml[\"security.authnrequest_signed\"] === \"true\";\r\n  const wantAssertionsSigned =\r\n    saml[\"security.want_assertions_signed\"] === \"true\";\r\n  const wantAssertionsEncrypted =\r\n    saml[\"security.want_assertions_encrypted\"] === \"true\";\r\n\r\n  //  let keyDescriptors = '';\r\n  let keyDescriptors = generateKeyDescriptors(saml);\r\n\r\n  const xml = `<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<md:EntityDescriptor entityID=\"${entityId}\"\r\n  xmlns:md=\"urn:oasis:names:tc:SAML:2.0:metadata\"\r\n  xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\"\r\n  xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\"\r\n  xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\">\r\n  <md:SPSSODescriptor \r\n    AuthnRequestsSigned=\"${authnSigned}\"\r\n    WantAssertionsSigned=\"${wantAssertionsSigned}\"\r\n    protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\r\n    ${keyDescriptors ? keyDescriptors + '\\n    ' : ''}    \r\n    <md:NameIDFormat>${nameIdFormat}</md:NameIDFormat>\r\n    <md:AssertionConsumerService index=\"1\" isDefault=\"true\" \r\n      Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"${acsUrl}\"/>\r\n  </md:SPSSODescriptor>\r\n</md:EntityDescriptor>`;\r\n\r\n  return xml;\r\n}\r\n\r\nconst jsonString = event.value.value;\r\nconst xmlOutput = generateSamlMetadataXml(jsonString);\r\nstage.setValue(xmlOutput);"
+						},
+						"outputs": [
+							"CreateXml"
+						]
+					},
+					{
+						"name": "ReadIdentityProviders",
+						"display": {
+							"position": {
+								"x": 240,
+								"y": 0
+							}
+						},
+						"config": {
+							"type": ".ReadConfig",
+							"failureOutputs": [],
+							"reference": {
+								"type": "Input",
+								"name": "intelligencehub_identityproviders_json",
+								"path": "",
+								"params": {},
+								"connectionName": "Read_Identity_Providers"
+							}
+						},
+						"outputs": [
+							"GenerateXml"
+						]
+					}
+				],
+				"trackActivity": false,
+				"triggers": [],
+				"errorHandler": {
+					"type": "default"
+				}
+			}
+		],
+		"namespace": []
+	},
+	"network": {
+		"groups": [],
+		"hubs": []
+	}
+}

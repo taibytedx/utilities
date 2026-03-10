@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<md:EntityDescriptor entityID="urn:example:sp:entity-id"
+  xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+  xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+  xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+  xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <md:SPSSODescriptor 
+    AuthnRequestsSigned="true"
+    WantAssertionsSigned="true"
+    protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:KeyDescriptor>
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>REPLACE_WITH_sp_cert_2024_CERT</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+        
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+    <md:AssertionConsumerService index="1" isDefault="true" 
+      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://localhost:45245/config/login/idp"/>
+  </md:SPSSODescriptor>
+</md:EntityDescriptor>

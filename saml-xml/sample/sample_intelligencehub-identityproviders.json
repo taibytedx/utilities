@@ -1,0 +1,26 @@
+{
+  "authentication": {
+    "providers": ["saml2", "internal"],
+    "saml2": {
+      "sp.nameidformat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+      "sp.entityid": "urn:example:sp:entity-id",
+      "sp.assertion_consumer_service.url": "http://localhost:45245/config/login/idp",
+
+      "idp.entityid": "https://idp.example.com/metadata",
+      "idp.single_sign_on_service.url": "https://idp.example.com/sso/saml",
+      "idp.single_sign_on_service.binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+
+      "security.signature_algorithm": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+      "security.digest_algorithm": "http://www.w3.org/2001/04/xmlenc#sha256",
+      "security.requested_authncontext": "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
+      "security.want_assertions_signed": "true",
+      "security.authnrequest_signed": "true",
+      "security.want_assertions_encrypted": "true",
+
+      "idp.x509cert": "idp_cert_alias_or_placeholder",
+      "sp.x509cert": "sp_cert_2024",
+      "sp.privatekey": "sp_cert_2024",
+      "custom.roleNameAttribute": "roles"
+    }
+  }
+}
