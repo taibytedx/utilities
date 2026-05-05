@@ -1,0 +1,32 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "45245:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - central-node
+
+  central-node:
+    image: highbyte:${IMAGE_VERSION:-4.4.1}
+    #container_name: highbyteCentralNode
+    hostname: nginx2-hbih-central-node
+    ports:
+      - 45000:45245
+      - 45001:8885
+    expose:
+      - 45245
+      - 8885
+      - 1885
+      - 9001
+    environment:
+      PUBLIC_hostname: hbih-central-node
+      HIGHBYTE_STORE_PASSWORD: ${HIGHBYTE_STORE_PASSWORD:-password}
+      HIGHBYTE_BASE_URL: http://localhost:45245/subpath
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 45245 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s  # JVM startup takes time
