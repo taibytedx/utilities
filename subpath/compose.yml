@@ -20,6 +20,8 @@ services:
       - 8885
       - 1885
       - 9001
+    volumes:
+      - ./config-settings.json:/usr/local/highbyte/configuration/config/settings.json:ro
     environment:
       PUBLIC_hostname: hbih-central-node
       HIGHBYTE_STORE_PASSWORD: ${HIGHBYTE_STORE_PASSWORD:-password}
