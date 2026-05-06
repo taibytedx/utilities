@@ -1,3 +1,3 @@
 {
-    "apiBaseUrl": "http://localhost:45245/subpath/"
+    "apiBaseUrl": "http://localhost/subpath/"
 }
