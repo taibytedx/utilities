@@ -1,0 +1,22 @@
+version: '2.4'
+services:
+  intelligence-hub:
+    image: highbyte:4.4.1
+    expose:
+      - 45245
+    volumes:
+      - hb_vol-441:/usr/local/highbyte/appData
+      - ./cfg-data/config-settings.json:/usr/local/highbyte/configuration/config/settings.json
+    environment:
+      HIGHBYTE_BASE_URL: ${baseurl}
+    restart: on-failure
+    mem_limit: 1024m
+    networks:
+      - proxy-redirect
+
+volumes:
+  hb_vol-441:
+
+networks:
+  proxy-redirect:
+    external: true
