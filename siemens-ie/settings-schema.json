@@ -1,0 +1,22 @@
+{
+  "uischema": {
+    "type": "Control",
+    "scope": "#/properties/apiBaseUrl",
+    "label": "API Base URL",
+    "options": {
+      "description": "Base URL for the Intelligence Hub API, e.g. https://your-hostname.com/ih/"
+    }
+  },
+  "dataschema": {
+    "type": "object",
+    "properties": {
+      "apiBaseUrl": {
+        "type": "string",
+        "default": "https://your-hostname.com/ih/",
+        "description": "Base URL for the Intelligence Hub API",
+        "minLength": 1
+      }
+    },
+    "required": ["apiBaseUrl"]
+  }
+}
