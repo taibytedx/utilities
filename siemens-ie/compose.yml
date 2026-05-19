@@ -5,18 +5,32 @@ services:
     expose:
       - 45245
     volumes:
-      - hb_vol-441:/usr/local/highbyte/appData
-      - ./cfg-data/config-settings.json:/usr/local/highbyte/configuration/config/settings.json
-    environment:
-      HIGHBYTE_BASE_URL: ${baseurl}
-    restart: on-failure
+      - 'hb_vol-441:/usr/local/highbyte/appData'
+      - 'config_vol:/usr/local/highbyte/configuration/config'
+      - './cfg-data:/cfg-data'
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -a
+        source /cfg-data/config.txt
+        set +a
+        if [ "$$ACCEPT_EULA" != "Y" ]; then
+          echo "ACCEPT_EULA is not set to Y in config.txt. Exiting."
+          exit 0
+        fi
+        exec /usr/local/highbyte/runtime/entrypoint.sh "$$@"
+      - --
+    command: start
+    restart: on-failure:3
     mem_limit: 1024m
     networks:
       - proxy-redirect
-
+ 
 volumes:
   hb_vol-441:
-
+  config_vol:
+ 
 networks:
   proxy-redirect:
     external: true
