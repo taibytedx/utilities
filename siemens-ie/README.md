@@ -51,7 +51,6 @@ $nginxArg
 
 
 ### app config schema
-It would be neat if we can use the schema template instead so user can fill out a field instead of uploading a file
 ```
 .\iectl publisher sa app-config add `
     --appname "Intelligence Hub" `
@@ -64,21 +63,45 @@ It would be neat if we can use the schema template instead so user can fill out 
     --filepath "./settings-schema.json"
 ```
 
-
-### how do you parameterize values to the compose file?
-is there a way to upload a .env file to pass in environment variables?
-```
-.\iectl publisher standalone-app app-config add `
-    --appname "Intelligence Hub" `
-    --configname "UploadConfig" `
-    --configdescription "Upload a configuration file" `
-    --hostpath "."
-```
-
 ### reference
 
 ```
 .\iectl publisher sa list
 .\iectl publisher sa app-config l -a "Intelligence Hub"
 .\iectl publisher sa app-config delete -a "Intelligence Hub" --configid "UIc3BaEdy1h6c9bTB1x80N6dgFeg6jjZ"
+```
+
+```
+.\iectl publisher sa app-config add `
+    --appname "Intelligence Hub" `
+    --configname "EnvironmentVariablesConfig" `
+    --configdescription "Configure your environment variables" `
+    --hostpath "config_vol2" `
+    --templatename "EnvironmentVariablesConfigTemplate" `
+    --templatedescription "Environment Variables Config Template V1" `
+    --filepath "./config.txt"
+```
+
+```
+.\iectl publisher sa app-config add `
+    --appname "Intelligence Hub" `
+    --configname "SettingsConfig" `
+    --configdescription "Configure the API Base URL" `
+    --hostpath "./cfg-data" `
+    --templatename "ConfigurationSettingsTemplate" `
+    --templatedescription "Configuration Settings Template Schema V2" `
+    --jsonschema `
+    --filepath "./settings.json"
+```
+
+```
+.\iectl publisher sa app-config add `
+    --appname "Intelligence Hub" `
+    --configname "SettingsConfig" `
+    --configdescription "Configure the API Base URL" `
+    --hostpath "./cfg-data" `
+    --templatename "ConfigurationSettingsTemplate" `
+    --templatedescription "Configuration Settings Template Schema V1" `
+    --jsonschema `
+    --filepath "./settings.json"
 ```
