@@ -29,16 +29,30 @@ $nginxArg
     -t "FromBoxReverseProxy" -s "intelligence-hub" -u "ih/ui/index.html"
 ```
 
-### add app config for uploading /configuration/config/settings.json
+### add JSON Schema app config for uploading /configuration/config/settings.json
 ```
-.\iectl publisher standalone-app app-config add `
+.\iectl publisher sa app-config add `
     --appname "Intelligence Hub" `
-    --configname "TextConfig" `
-    --configdescription "Configure your example application" `
+    --configname "IE Device URL" `
+    --configdescription "Assign the Base URL of IED + /ih subpath" `
+    --hostpath "config_vol" `
+    --templatename "ConfigurationSettingsTemplate" `
+    --templatedescription "Configuration Settings Template Schema V2" `
+    --jsonschema `
+    --filepath "./app-config/settings.json"
+```
+
+### add JSON Schema app config for getting user input for accepting EULA
+```
+.\iectl publisher sa app-config add `
+    --appname "Intelligence Hub" `
+    --configname "AcceptEulaConfig" `
+    --configdescription "Accept EULA forms" `
     --hostpath "./cfg-data" `
-    --templatename "TextConfigTemplate" `
-    --templatedescription "Text Config Template v1" `
-    --filepath "./settings.json"
+    --templatename "AcceptEulaTemplate" `
+    --templatedescription "Accept EULA Template Schema V2" `
+    --jsonschema `
+    --filepath "./app-config/accept-eula.json"
 ```
 
 ### export app
@@ -49,20 +63,6 @@ $nginxArg
         --versionnumber "1.0.0"
 ```
 
-
-### app config schema
-```
-.\iectl publisher sa app-config add `
-    --appname "Intelligence Hub" `
-    --configname "SettingsConfig" `
-    --configdescription "Configure the API Base URL" `
-    --hostpath "./cfg-data" `
-    --templatename "SettingsTemplate" `
-    --templatedescription "Settings configuration template" `
-    --jsonschema `
-    --filepath "./settings-schema.json"
-```
-
 ### reference
 
 ```
@@ -71,37 +71,3 @@ $nginxArg
 .\iectl publisher sa app-config delete -a "Intelligence Hub" --configid "UIc3BaEdy1h6c9bTB1x80N6dgFeg6jjZ"
 ```
 
-```
-.\iectl publisher sa app-config add `
-    --appname "Intelligence Hub" `
-    --configname "EnvironmentVariablesConfig" `
-    --configdescription "Configure your environment variables" `
-    --hostpath "config_vol2" `
-    --templatename "EnvironmentVariablesConfigTemplate" `
-    --templatedescription "Environment Variables Config Template V1" `
-    --filepath "./config.txt"
-```
-
-```
-.\iectl publisher sa app-config add `
-    --appname "Intelligence Hub" `
-    --configname "SettingsConfig" `
-    --configdescription "Configure the API Base URL" `
-    --hostpath "./cfg-data" `
-    --templatename "ConfigurationSettingsTemplate" `
-    --templatedescription "Configuration Settings Template Schema V2" `
-    --jsonschema `
-    --filepath "./settings.json"
-```
-
-```
-.\iectl publisher sa app-config add `
-    --appname "Intelligence Hub" `
-    --configname "SettingsConfig" `
-    --configdescription "Configure the API Base URL" `
-    --hostpath "./cfg-data" `
-    --templatename "ConfigurationSettingsTemplate" `
-    --templatedescription "Configuration Settings Template Schema V1" `
-    --jsonschema `
-    --filepath "./settings.json"
-```
