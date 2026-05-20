@@ -1,0 +1,32 @@
+{
+  "dataschema": {
+    "type": "object",
+    "properties": {
+      "acceptEula": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "acceptEula"
+    ]
+  },
+  "uischema": {
+    "type": "VerticalLayout",
+    "elements": [
+      {
+        "type": "Group",
+        "label": "License Agreement",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/acceptEula",
+            "label": "I accept the End User License Agreement (EULA)",
+            "options": {
+              "toggle": true
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
