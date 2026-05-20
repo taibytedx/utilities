@@ -46,7 +46,7 @@ $nginxArg
 ```
 .\iectl publisher sa app-config add `
     --appname "Intelligence Hub" `
-    --configname "AcceptEulaConfig" `
+    --configname "EULA" `
     --configdescription "Accept EULA forms" `
     --hostpath "./cfg-data" `
     --templatename "AcceptEulaTemplate" `
