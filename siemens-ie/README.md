@@ -26,7 +26,7 @@ $nginxArg
 .\iectl publisher sa version create -a "Intelligence Hub" -v "1.0.0" `
     -y compose.yml `
     -n ($nginxArg | ConvertTo-Json -Compress) `
-    -t "FromBoxReverseProxy" -s "highbyte" -u "ih/"
+    -t "FromBoxReverseProxy" -s "intelligence-hub" -u "ih/ui/index.html"
 ```
 
 ### add app config for uploading /configuration/config/settings.json
