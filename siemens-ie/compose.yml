@@ -12,13 +12,23 @@ services:
       - /bin/sh
       - -c
       - |
-        set -a
-        source /cfg-data/config.txt
-        set +a
-        if [ "$$ACCEPT_EULA" != "Y" ]; then
-          echo "ACCEPT_EULA is not set to Y in config.txt. Exiting."
+        EULA_FILE="/cfg-data/accept-eula.json"
+        cat /cfg-data/accept-eula.json
+
+        if [ ! -f "$$EULA_FILE" ]; then
+          echo "ERROR: EULA file not found at $EULA_FILE"
           exit 0
         fi
+
+        CONTENT=$(cat "$$EULA_FILE" | tr -d '[:space:]')
+        echo $$CONTENT
+
+        if [ "$$CONTENT" != '{"acceptEula":true}' ]; then
+          echo "ERROR: You must accept the EULA before running Intelligence Hub."
+          exit 0
+        fi
+
+        echo "EULA accepted, starting Intelligence Hub..."
         exec /usr/local/highbyte/runtime/entrypoint.sh "$$@"
       - --
     command: start
