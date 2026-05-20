@@ -4,7 +4,7 @@
     "scope": "#/properties/apiBaseUrl",
     "label": "API Base URL",
     "options": {
-      "description": "Base URL for the Intelligence Hub API, e.g. https://your-hostname.com/ih/"
+      "description": "Base URL of the IE Device + /ih subpath for the Intelligence Hub, e.g. https://your-ied-hostname.com/ih/"
     }
   },
   "dataschema": {
@@ -12,8 +12,9 @@
     "properties": {
       "apiBaseUrl": {
         "type": "string",
-        "default": "https://your-hostname.com/ih/",
-        "description": "Base URL for the Intelligence Hub API",
+        "format": "uri",
+        "default": "https://your-ied-hostname.com/ih/",
+        "description": "Must be a fully qualified http(s) URL",
         "minLength": 1
       }
     },
