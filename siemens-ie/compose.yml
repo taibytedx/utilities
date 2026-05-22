@@ -1,45 +1,64 @@
 version: '2.4'
 services:
   intelligence-hub:
-    image: highbyte:4.4.1
+    image: highbyte/intelligence-hub:4.4.2
     expose:
       - 45245
     volumes:
-      - 'hb_vol-441:/usr/local/highbyte/appData'
-      - 'config_vol:/usr/local/highbyte/configuration/config'
-      - './cfg-data:/cfg-data'
+      - 'appData:/usr/local/highbyte/appData'
+      - 'config:/config'
     entrypoint:
       - /bin/sh
       - -c
       - |
-        EULA_FILE="/cfg-data/accept-eula.json"
-        cat /cfg-data/accept-eula.json
+        EULA_FILE="/config/accept-eula.json"
 
         if [ ! -f "$$EULA_FILE" ]; then
-          echo "ERROR: EULA file not found at $EULA_FILE"
+          echo "ERROR: EULA file not found at $$EULA_FILE"
           exit 0
         fi
 
         CONTENT=$(cat "$$EULA_FILE" | tr -d '[:space:]')
-        echo $$CONTENT
 
         if [ "$$CONTENT" != '{"acceptEula":true}' ]; then
           echo "ERROR: You must accept the EULA before running Intelligence Hub."
           exit 0
         fi
 
-        echo "EULA accepted, starting Intelligence Hub..."
+        SETTINGS_FILE="/config/settings.json"
+
+        if [ ! -f "$$SETTINGS_FILE" ]; then
+          echo "ERROR: settings.json not found"
+          exit 0
+        fi
+
+        HIGHBYTE_BASE_URL=$(grep -o '"apiBaseUrl":"[^"]*"' "$$SETTINGS_FILE" | sed 's/"apiBaseUrl":"//;s/"//')
+
+        if [ -z "$$HIGHBYTE_BASE_URL" ]; then
+          echo "ERROR: apiBaseUrl not found in settings.json"
+          exit 0
+        fi
+
+        cp /config/settings.json /usr/local/highbyte/configuration/config/settings.json
+
+        ACCEPT_EULA=Y
+        export HIGHBYTE_BASE_URL
+        export ACCEPT_EULA
+        echo "EULA accepted."
+        echo "Intelligence Hub URL: $$HIGHBYTE_BASE_URL" 
+        echo "Starting Intelligence Hub..."
         exec /usr/local/highbyte/runtime/entrypoint.sh "$$@"
       - --
     command: start
     restart: on-failure:3
-    mem_limit: 1024m
+    mem_limit: 4096m
+    mem_reservation: 1024m
     networks:
       - proxy-redirect
  
 volumes:
-  hb_vol-441:
-  config_vol:
+  appData:
+  config:
  
 networks:
   proxy-redirect:
