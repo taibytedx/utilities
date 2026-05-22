@@ -5,13 +5,13 @@ services:
     expose:
       - 45245
     volumes:
-      - 'appData:/usr/local/highbyte/appData'
-      - 'app-config:/app-config'
+      - 'appdata:/usr/local/highbyte/appData'
+      - 'appconfig:/appConfig'
     entrypoint:
       - /bin/sh
       - -c
       - |
-        EULA_FILE="/app-config/accept-eula.json"
+        EULA_FILE="/appConfig/accept-eula.json"
 
         if [ ! -f "$$EULA_FILE" ]; then
           echo "ERROR: EULA file not found at $$EULA_FILE"
@@ -25,25 +25,26 @@ services:
           exit 0
         fi
 
-        SETTINGS_FILE="/app-config/settings.json"
+        SETTINGS_FILE="/appConfig/settings.json"
 
         if [ ! -f "$$SETTINGS_FILE" ]; then
           echo "ERROR: settings.json not found"
           exit 0
         fi
 
-        HIGHBYTE_BASE_URL=$(grep -o '"apiBaseUrl":"[^"]*"' "$$SETTINGS_FILE" | sed 's/"apiBaseUrl":"//;s/"//')
+        IE_DEVICE_URL=$(grep -o '"deviceUrl":"[^"]*"' "$$SETTINGS_FILE" | sed 's/"deviceUrl":"//;s/"//;s|/$||')
 
-        if [ -z "$$HIGHBYTE_BASE_URL" ]; then
-          echo "ERROR: apiBaseUrl not found in settings.json"
+        if [ -z "$$IE_DEVICE_URL" ]; then
+          echo "ERROR: deviceUrl not found in settings.json"
           exit 0
         fi
 
-        cp /app-config/settings.json /usr/local/highbyte/configuration/config/settings.json
+        HIGHBYTE_BASE_URL="$$IE_DEVICE_URL/intelligence-hub"
+        echo "{\"apiBaseUrl\": \"$$HIGHBYTE_BASE_URL\"}" > /usr/local/highbyte/configuration/config/settings.json
 
         ACCEPT_EULA=Y
-        export HIGHBYTE_BASE_URL
         export ACCEPT_EULA
+        export HIGHBYTE_BASE_URL
         echo "EULA accepted."
         echo "Intelligence Hub URL: $$HIGHBYTE_BASE_URL" 
         echo "Starting Intelligence Hub..."
@@ -51,14 +52,14 @@ services:
       - --
     command: start
     restart: on-failure:3
-    mem_limit: 4096m
+    mem_limit: 8192m
     mem_reservation: 1024m
     networks:
       - proxy-redirect
  
 volumes:
-  appData:
-  config:
+  appdata:
+  appconfig:
  
 networks:
   proxy-redirect:
