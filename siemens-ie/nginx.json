@@ -1,7 +1,7 @@
 {
   "intelligence-hub": [
     {
-      "name": "ih",
+      "name": "intelligence-hub",
       "protocol": "HTTP",
       "port": "45245",
       "headers": {
