@@ -36,11 +36,11 @@ echo $nginxArg
     --appname "HighByte Intelligence Hub" `
     --configname "SettingsConfig" `
     --configdescription "Assign the URL for Intelligence Hub" `
-    --hostpath "config" `
+    --hostpath "app-config" `
     --templatename "ConfigurationSettingsTemplate" `
     --templatedescription "Configuration Settings Template Schema V1" `
     --jsonschema `
-    --filepath "./config/settings.json"
+    --filepath "./app-config/settings.json"
 ```
 
 ### add JSON Schema app config for getting user input for accepting EULA
@@ -49,11 +49,11 @@ echo $nginxArg
     --appname "HighByte Intelligence Hub" `
     --configname "AcceptEulaConfig" `
     --configdescription "Accept EULA forms" `
-    --hostpath "config" `
+    --hostpath "app-config" `
     --templatename "AcceptEulaTemplate" `
     --templatedescription "Accept EULA Template Schema V1" `
     --jsonschema `
-    --filepath "./config/accept-eula.json"
+    --filepath "./app-config/accept-eula.json"
 ```
 
 ### export app
