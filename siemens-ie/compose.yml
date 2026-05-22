@@ -6,12 +6,12 @@ services:
       - 45245
     volumes:
       - 'appData:/usr/local/highbyte/appData'
-      - 'config:/config'
+      - 'app-config:/app-config'
     entrypoint:
       - /bin/sh
       - -c
       - |
-        EULA_FILE="/config/accept-eula.json"
+        EULA_FILE="/app-config/accept-eula.json"
 
         if [ ! -f "$$EULA_FILE" ]; then
           echo "ERROR: EULA file not found at $$EULA_FILE"
@@ -25,7 +25,7 @@ services:
           exit 0
         fi
 
-        SETTINGS_FILE="/config/settings.json"
+        SETTINGS_FILE="/app-config/settings.json"
 
         if [ ! -f "$$SETTINGS_FILE" ]; then
           echo "ERROR: settings.json not found"
@@ -39,7 +39,7 @@ services:
           exit 0
         fi
 
-        cp /config/settings.json /usr/local/highbyte/configuration/config/settings.json
+        cp /app-config/settings.json /usr/local/highbyte/configuration/config/settings.json
 
         ACCEPT_EULA=Y
         export HIGHBYTE_BASE_URL
