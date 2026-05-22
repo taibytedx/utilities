@@ -1,0 +1,19 @@
+{
+  "uischema": {
+    "type": "Control",
+    "scope": "#/properties/deviceUrl",
+    "label": "Device URL"
+  },
+  "dataschema": {
+    "type": "object",
+    "properties": {
+      "deviceUrl": {
+        "type": "string",
+        "format": "uri",
+        "default": "https://ie-device-001.company.com",
+        "description": "e.g. https://ie-device-001.company.com or https://192.168.1.100"
+      }
+    },
+    "required": ["deviceUrl"]
+  }
+}
