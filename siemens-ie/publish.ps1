@@ -28,10 +28,10 @@ $nginxArg = jq -c 'map_values(map(.headers |= tojson))' nginx.json
     --configname "IE_Device_URL" `
     --configdescription "Specify the URL of the target device hosting Intelligence Hub" `
     --hostpath "appconfig" `
-    --templatename "ConfigurationSettingsTemplate" `
-    --templatedescription "Configuration Settings Template Schema V1" `
+    --templatename "DeviceURLTemplate" `
+    --templatedescription "Device URL Template Schema V1" `
     --jsonschema `
-    --filepath "./appconfig/settings.json"
+    --filepath "./appconfig/device-url.json"
 
 # Add EULA app config
 .\iectl publisher sa app-config add `
