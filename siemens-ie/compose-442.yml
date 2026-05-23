@@ -13,7 +13,7 @@ services:
       - |
         # Validate EULA acceptance
         # Path to appconfig JSON file containing EULA acceptance boolean
-        EULA_FILE="/appConfig/accept-eula.json"
+        EULA_FILE="/appconfig/accept-eula.json"
 
         # Verify file was mounted in
         if [ ! -f "$$EULA_FILE" ]; then
@@ -32,7 +32,7 @@ services:
 
         # Extract device base URL and append fixed application subpath.
         # Capture device base URL entered by the user, e.g. https://ie-device-001.company.com
-        DEVICE_URL_FILE="/appConfig/device-url.json"
+        DEVICE_URL_FILE="/appconfig/device-url.json"
 
         # Verify file was mounted
         if [ ! -f "$$DEVICE_URL_FILE" ]; then
@@ -40,8 +40,8 @@ services:
           exit 0
         fi
 
-        # Extract key-value pair, then strip out everything besides the value including trailing /
-        IE_DEVICE_URL=$(grep -o '"deviceUrl":"[^"]*"' "$$DEVICE_URL_FILE" | sed 's/"deviceUrl":"//;s/"//;s|/$||')
+        # Extract key-value pair, then strip out everything besides the value including trailing '/'
+        IE_DEVICE_URL=$(grep -o '"deviceUrl":"[^"]*"' "$$DEVICE_URL_FILE" | sed 's|"deviceUrl":"||;s|"||;s|/$||')
 
         # Verify deviceUrl
         if [ -z "$$IE_DEVICE_URL" ]; then
