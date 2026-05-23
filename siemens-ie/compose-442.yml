@@ -6,42 +6,54 @@ services:
       - 45245
     volumes:
       - 'appdata:/usr/local/highbyte/appData'
-      - 'appconfig:/appConfig'
+      - 'appconfig:/appconfig'
     entrypoint:
       - /bin/sh
       - -c
       - |
+        # Validate EULA acceptance
+        # Path to appconfig JSON file containing EULA acceptance boolean
         EULA_FILE="/appConfig/accept-eula.json"
 
+        # Verify file was mounted in
         if [ ! -f "$$EULA_FILE" ]; then
           echo "ERROR: EULA file not found at $$EULA_FILE"
           exit 0
         fi
 
+        # Strip whitespace in case JSON formatting deviates
         CONTENT=$(cat "$$EULA_FILE" | tr -d '[:space:]')
 
+        # Verify the entire JSON string with boolean true
         if [ "$$CONTENT" != '{"acceptEula":true}' ]; then
           echo "ERROR: You must accept the EULA before running Intelligence Hub."
           exit 0
         fi
 
-        SETTINGS_FILE="/appConfig/settings.json"
+        # Extract device base URL and append fixed application subpath.
+        # Capture device base URL entered by the user, e.g. https://ie-device-001.company.com
+        DEVICE_URL_FILE="/appConfig/device-url.json"
 
-        if [ ! -f "$$SETTINGS_FILE" ]; then
-          echo "ERROR: settings.json not found"
+        # Verify file was mounted
+        if [ ! -f "$$DEVICE_URL_FILE" ]; then
+          echo "ERROR: device-url.json not found"
           exit 0
         fi
 
-        IE_DEVICE_URL=$(grep -o '"deviceUrl":"[^"]*"' "$$SETTINGS_FILE" | sed 's/"deviceUrl":"//;s/"//;s|/$||')
+        # Extract key-value pair, then strip out everything besides the value including trailing /
+        IE_DEVICE_URL=$(grep -o '"deviceUrl":"[^"]*"' "$$DEVICE_URL_FILE" | sed 's/"deviceUrl":"//;s/"//;s|/$||')
 
+        # Verify deviceUrl
         if [ -z "$$IE_DEVICE_URL" ]; then
-          echo "ERROR: deviceUrl not found in settings.json"
+          echo "ERROR: deviceUrl not found in device-url.json"
           exit 0
         fi
 
+        # Generate the application URL including subpath and copy into a JSON at the expected path
         HIGHBYTE_BASE_URL="$$IE_DEVICE_URL/intelligence-hub"
         echo "{\"apiBaseUrl\": \"$$HIGHBYTE_BASE_URL\"}" > /usr/local/highbyte/configuration/config/settings.json
 
+        # Assign the required environment variables
         ACCEPT_EULA=Y
         export ACCEPT_EULA
         export HIGHBYTE_BASE_URL
