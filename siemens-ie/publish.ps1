@@ -16,36 +16,36 @@ $ErrorActionPreference = "Stop"
 $nginxArg = jq -c 'map_values(map(.headers |= tojson))' nginx.json
 
 # Create version
-.\iectl publisher sa version create -a "HighByte Intelligence Hub" -v "4.4.2-rev1" `
+.\iectl publisher sa version create -a "HighByte Intelligence Hub" -v "4.4.2-rev2" `
     -y compose-442.yml `
     -n ($nginxArg | ConvertTo-Json -Compress) `
     -t "FromBoxReverseProxy" -s "intelligence-hub" -u "intelligence-hub/" `
     -c "Please view the complete release notes and patch history for details on new features, fixes, breaking changes, and security updates at https://www.highbyte.com/resources/release-notes/version-4-4"
 
-# Add IE Device URL app config
-.\iectl publisher sa app-config add `
-    --appname "HighByte Intelligence Hub" `
-    --configname "IE_Device_URL" `
-    --configdescription "Specify the URL of the target device hosting Intelligence Hub" `
-    --hostpath "appconfig" `
-    --templatename "DeviceURLTemplate" `
-    --templatedescription "Device URL Template Schema V1" `
-    --jsonschema `
-    --filepath "./appconfig/device-url.json"
-
 # Add EULA app config
 .\iectl publisher sa app-config add `
     --appname "HighByte Intelligence Hub" `
-    --configname "End_User_License_Agreement" `
+    --configname "EndUserLicenseAgreement" `
     --configdescription "Review and Accept EULA: https://www.highbyte.com/hubfs/highbyte_intelligence_hub_eula.pdf" `
     --hostpath "appconfig" `
     --templatename "AcceptEulaTemplate" `
-    --templatedescription "Accept EULA Template Schema V1" `
+    --templatedescription "Accept EULA Template Schema V2" `
     --jsonschema `
     --filepath "./appconfig/accept-eula.json"
+
+# Add IE Device URL app config
+.\iectl publisher sa app-config add `
+    --appname "HighByte Intelligence Hub" `
+    --configname "DeviceURL" `
+    --configdescription "Specify the URL of the target device hosting Intelligence Hub" `
+    --hostpath "appconfig" `
+    --templatename "DeviceURLTemplate" `
+    --templatedescription "Device URL Template Schema V2" `
+    --jsonschema `
+    --filepath "./appconfig/device-url.json"
 
 # Export version
 .\iectl publisher standalone-app version export `
     --appname "HighByte Intelligence Hub" `
     --exportpath .\export `
-    --versionnumber "4.4.2-rev1"
+    --versionnumber "4.4.2-rev2"
