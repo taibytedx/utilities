@@ -15,7 +15,7 @@ services:
         # Path to appconfig JSON file containing EULA acceptance boolean
         EULA_FILE="/appconfig/accept-eula.json"
 
-        # Verify file was mounted in
+        # Verify file was created by appconfig
         if [ ! -f "$$EULA_FILE" ]; then
           echo "ERROR: EULA file not found at $$EULA_FILE"
           exit 0
@@ -34,7 +34,7 @@ services:
         # Capture device base URL entered by the user, e.g. https://ie-device-001.company.com
         DEVICE_URL_FILE="/appconfig/device-url.json"
 
-        # Verify file was mounted
+        # Verify file was created by appconfig
         if [ ! -f "$$DEVICE_URL_FILE" ]; then
           echo "ERROR: device-url.json not found"
           exit 0
@@ -64,8 +64,11 @@ services:
       - --
     command: start
     restart: on-failure:3
-    mem_limit: 8192m
-    mem_reservation: 1024m
+    environment:
+      JDK_JAVA_OPTIONS: >-
+        -Xmx2g
+    mem_limit: 4g
+    mem_reservation: 1g
     networks:
       - proxy-redirect
  
