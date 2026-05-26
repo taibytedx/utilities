@@ -16,7 +16,7 @@ Publishes the HighByte Intelligence Hub application to Siemens Industrial Edge u
 ├── compose-442.yml           # Docker Compose for Intelligence Hub
 ├── nginx.json                # Reverse proxy configuration
 ├── hbih-icon.png             # App icon
-└── app-config/
+└── appconfig/
     ├── accept-eula.json      # EULA acceptance JSON Forms schema
     └── device-url.json       # IE Device URL JSON Forms schema
 ```
@@ -42,7 +42,7 @@ This will:
 1. Delete the existing app if it exists
 2. Create the app with metadata and icon
 3. Create a new version with the compose and nginx configuration
-4. Add app-config schemas for EULA and IE Device URL
+4. Add appconfig schemas for EULA and IE Device URL
 5. Export the app to `./export`
 
 ## App Configuration
@@ -59,7 +59,7 @@ When installing on an IE Device, the user will be prompted to configure:
 ### Overview
 
 Intelligence Hub requires two configuration inputs from the user at deploy time,
-collected via IE's app-config JSON Forms UI:
+collected via IE's appconfig JSON Forms UI:
 
 1. **EULA acceptance** (`accept-eula.json`)
 2. **IE Device URL** (`device-url.json`)
@@ -70,7 +70,7 @@ collected via IE's app-config JSON Forms UI:
 2. User configures app:
    - Accepts EULA
    - Enters IE Device URL (e.g. `https://ie-device-001.company.com`)
-3. IEM writes app-config files to `/appconfig` volume
+3. IEM writes appconfig files to `/appconfig` volume
 4. Container starts, entrypoint script:
    - Validates EULA was accepted, exits cleanly if not
    - Extracts `deviceUrl` from `device-url.json`
@@ -82,7 +82,7 @@ collected via IE's app-config JSON Forms UI:
 
 ### Design Decision: settings.json Generation
 
-Originally the app-config was intended to generate `/usr/local/highbyte/configuration/config/settings.json`
+Originally the appconfig was intended to generate `/usr/local/highbyte/configuration/config/settings.json`
 directly via the JSON Forms output. However since the entrypoint already parses `device-url.json`
 to extract the URL for the `HIGHBYTE_BASE_URL` environment variable, we use that opportunity to also
 append the fixed `/intelligence-hub` subpath and generate `settings.json` here instead.
@@ -111,11 +111,11 @@ This simplifies the user input — they only need to enter the base device URL
 # List apps
 .\iectl publisher sa list
 
-# List app-configs
-.\iectl publisher sa app-config l -a "HighByte Intelligence Hub"
+# List appconfigs
+.\iectl publisher sa appconfig l -a "HighByte Intelligence Hub"
 
-# Delete an app-config by ID
-.\iectl publisher sa app-config delete -a "HighByte Intelligence Hub" --configid "<configid>"
+# Delete an appconfig by ID
+.\iectl publisher sa appconfig delete -a "HighByte Intelligence Hub" --configid "<configid>"
 
 # List iectl configs
 .\iectl config list
