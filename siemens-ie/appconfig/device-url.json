@@ -1,19 +1,50 @@
 {
   "uischema": {
-    "type": "Control",
-    "scope": "#/properties/deviceUrl",
-    "label": "Device URL"
+    "type": "VerticalLayout",
+    "elements": [
+      {
+        "type": "Control",
+        "scope": "#/properties/deviceScheme",
+        "label": "Protocol",
+        "options": {
+          "radio": true
+        }
+      },
+      {
+        "type": "Control",
+        "scope": "#/properties/deviceHostname",
+        "label": "Device Hostname"
+      }
+    ]
   },
   "dataschema": {
     "type": "object",
     "properties": {
-      "deviceUrl": {
+      "deviceScheme": {
         "type": "string",
-        "format": "uri",
-        "default": "https://ie-device-001.company.com",
-        "description": "e.g. https://ie-device-001.company.com or https://192.168.1.100"
+        "enum": [
+          "https",
+          "http"
+        ],
+        "default": "https"
+      },
+      "deviceHostname": {
+        "type": "string",
+        "anyOf": [
+          {
+            "format": "hostname"
+          },
+          {
+            "format": "ipv4"
+          }
+        ],
+        "default": "192.168.1.100",
+        "description": "e.g. ie-device-001.company.com or 192.168.1.100"
       }
     },
-    "required": ["deviceUrl"]
+    "required": [
+      "deviceScheme",
+      "deviceHostname"
+    ]
   }
 }
