@@ -7,10 +7,11 @@ $ErrorActionPreference = "Stop"
 # Create app
 .\iectl publisher standalone-app create `
     --appname "HighByte Intelligence Hub" `
-    --reponame "highbyte" `
+    --reponame "highbyte-intelligencehub" `
     --appdescription "HighByte Intelligence Hub is an industrial data operations solution, designed specifically for data modeling, orchestration and governance allowing to seamlessly connect, contextualize and transform data from both operational technology (OT) and information technology (IT) sources." `
     --iconpath ".\hbih-icon.png" `
-    --webAddress "https://www.highbyte.com"
+    --webAddress "https://www.highbyte.com" `
+    --appId "industrialdataopsintelligencehub"
 
 # Build nginx arg
 $nginxArg = jq -c 'map_values(map(.headers |= tojson))' nginx.json
