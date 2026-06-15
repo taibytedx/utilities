@@ -30,40 +30,47 @@ services:
 
         # Extract device hostname and append fixed application subpath.
         # Capture device hostname entered by the user, e.g. ie-device-001.company.com
-        DEVICE_URL_FILE="/appconfig/device-url.json"
+        DEVICE_HOSTNAME_FILE="/appconfig/device-hostname.json"
 
         # Verify file was created by appconfig
-        if [ ! -f "$$DEVICE_URL_FILE" ]; then
-          export HIGHBYTE_BASE_URL="https://edge-device-001.example.com/intelligence-hub"
-          echo "WARNING: Device URL not found at $$DEVICE_URL_FILE, defaulting to $$HIGHBYTE_BASE_URL"
+        if [ ! -f "$$DEVICE_HOSTNAME_FILE" ]; then
+          CERTSIPS_FILE="/var/run/edgedevice/certsips.json"
+          echo "WARNING: Device hostname not found at $$DEVICE_HOSTNAME_FILE, defaulting to $$CERTSIPS_FILE"
+          if [ ! -f "$$CERTSIPS_FILE" ]; then
+            echo "WARNING: CERTSIPS file not found at $$CERTSIPS_FILE"
+          else
+            # Strip whitespace from file contents
+            CERTSIPS_FILE_COMPACT=$(cat "$$CERTSIPS_FILE" | tr -d '[:space:]')
+
+            # Extract key-value pair, then strip out everything besides the value including trailing '/'
+            EDGE_IPS=$(echo "$$CERTSIPS_FILE_COMPACT" \
+              | grep -o '"edge-ips":"[^"]*"' \
+              | sed 's|"edge-ips":"||;s|"||;s|/$||')
+
+            # Take first IP from comma-separated list
+            DEVICE_HOSTNAME=$(echo "$$EDGE_IPS" | cut -d',' -f1)
+          fi
         else
           # Strip whitespace from file contents
-          DEVICE_URL_COMPACT=$(cat "$$DEVICE_URL_FILE" | tr -d '[:space:]')
+          DEVICE_HOSTNAME_COMPACT=$(cat "$$DEVICE_HOSTNAME_FILE" | tr -d '[:space:]')
 
           # Extract key-value pair, then strip out everything besides the value including trailing '/'
-          DEVICE_HOSTNAME=$(echo "$$DEVICE_URL_COMPACT" \
+          DEVICE_HOSTNAME=$(echo "$$DEVICE_HOSTNAME_COMPACT" \
             | grep -o '"deviceHostname":"[^"]*"' \
             | sed 's|"deviceHostname":"||;s|"||;s|/$||')
-
-          # Verify deviceHostname
-          if [ -z "$$DEVICE_HOSTNAME" ]; then
-            echo "WARNING: deviceHostname not found in device-url.json, defaulting to edge-device-001.example.com"
-            DEVICE_HOSTNAME="edge-device-001.example.com"
-          fi
-
-          # Edge Device is expected to use HTTPS
-          DEVICE_SCHEME="https"
-          
-          # Construct the application endpoint and assign to the environment variable the backend uses for the redirect
-          export HIGHBYTE_BASE_URL="$$DEVICE_SCHEME://$$DEVICE_HOSTNAME/intelligence-hub"
         fi
 
-        if [ -z "$$HIGHBYTE_BASE_URL" ]; then
-          echo "WARNING: HIGHBYTE_BASE_URL is not set"
-        else
-          # Generate the settings.json for the frontend to point to the backend
-          echo "{\"apiBaseUrl\": \"$$HIGHBYTE_BASE_URL\"}" > /usr/local/highbyte/configuration/config/settings.json
+        # Verify deviceHostname
+        if [ -z "$$DEVICE_HOSTNAME" ]; then
+          DEVICE_HOSTNAME="edge-device-001.example.com"
+          echo "WARNING: deviceHostname not found in device-hostname.json, defaulting to $$DEVICE_HOSTNAME"
         fi
+        
+        # Construct the application endpoint and assign to the environment variable the backend uses for the redirect
+        export HIGHBYTE_BASE_URL="https://$$DEVICE_HOSTNAME/intelligence-hub"
+
+        # Generate the settings.json for the frontend to point to the backend
+        echo "{\"apiBaseUrl\": \"$$HIGHBYTE_BASE_URL\"}" > /usr/local/highbyte/configuration/config/settings.json
 
         exec /usr/local/highbyte/runtime/entrypoint.sh "$$@"
       - --
