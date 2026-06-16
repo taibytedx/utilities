@@ -6,13 +6,16 @@ Publishes the HighByte Intelligence Hub application to Siemens Industrial Edge u
 
 - [iectl](https://docs.eu1.edge.siemens.cloud/apis_and_references/iectl/gettingstarted.html) installed
 - Docker Desktop running with TCP enabled on `http://127.0.0.1:2375`
+- linux bash environment
+- install jq for parsing json output from the iectl commands
 - Publisher workspace initialized (see [Setup](#setup))
+- Access to IE Management for importing apps and deploying to devices
 
 ## Directory Structure
 
 ```
 .
-├── publish.ps1               # Main publish script
+├── publish.sh               # Main publish script
 ├── compose-442.yml           # Docker Compose for Intelligence Hub
 ├── nginx.json                # Reverse proxy configuration
 ├── hbih-icon.png             # App icon
@@ -25,16 +28,18 @@ Publishes the HighByte Intelligence Hub application to Siemens Industrial Edge u
 
 Run once to initialize the publisher workspace:
 
-```powershell
-.\iectl config add publisher --name dev-workspace --workspace ./workspace --dockerurl http://127.0.0.1:2375
-.\iectl publisher workspace init
+```bash
+./iectl config add publisher --name dev-workspace --workspace ./dev-workspace --dockerurl http://127.0.0.1:2375
+./iectl publisher workspace init
 ```
+ [ref workspace init](https://docs.eu1.edge.siemens.cloud/apis_and_references/iectl/V2_0_0/publisher/workspace/init.html)
+
 
 ## Usage
 
 Run the publish script to create and export the app:
 
-```powershell
+```bash
 .\publish.ps1
 ```
 
