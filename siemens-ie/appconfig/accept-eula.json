@@ -15,12 +15,12 @@
     "elements": [
       {
         "type": "Group",
-        "label": "License Agreement",
+        "label": "Review and accept the HighByte Intelligence Hub End User License Agreement: https://www.highbyte.com/hubfs/highbyte_intelligence_hub_eula.pdf",
         "elements": [
           {
             "type": "Control",
             "scope": "#/properties/acceptEula",
-            "label": "I accept the End User License Agreement (EULA)",
+            "label": "I accept the End User License Agreement",
             "options": {
               "toggle": true
             }
