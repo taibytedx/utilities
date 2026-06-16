@@ -11,6 +11,7 @@ Publishes the HighByte Intelligence Hub application to Siemens Industrial Edge u
 - `jq` installed for parsing JSON output from iectl commands (`sudo apt-get install jq`)
 - Publisher workspace initialized (see [Setup](#setup))
 - Access to IE Management for importing apps and deploying to devices
+- Copy of the existing app pasted into /imports
 
 ## Directory Structure
 
@@ -25,8 +26,8 @@ Publishes the HighByte Intelligence Hub application to Siemens Industrial Edge u
 ├── appconfig
 │   ├── accept-eula.json      # EULA acceptance JSON Forms schema
 │   └── device-hostname.json  # IE Device hostname JSON Forms schema
-├── export                    # Source .app file for import
-└── export-final              # Exported .app file after publish
+├── imports                   # Source .app file for import
+└── exports                   # Exported .app file after publish
 ```
 
 ## Setup

@@ -10,7 +10,7 @@ COMPOSE_FILE="compose-442.yml"
 
 # If app doesn't exist, import
 if ! ./iectl publisher sa list | jq -e '.[] | select(.title == "'"$APP_NAME"'")' > /dev/null 2>&1; then
-    ./iectl publisher standalone-app import -a "./exports/${APP_ID}_${APP_VERSION}.app"
+    ./iectl publisher standalone-app import -a "./imports/${APP_ID}_${APP_VERSION}.app"
 fi
 
 ## App Config

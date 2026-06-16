@@ -1,6 +1,7 @@
-# app exports #
+# app builds #
 ###############
 *exports/
+*imports/
 
 # workspaces #
 ##############
