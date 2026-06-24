@@ -1,0 +1,38 @@
+{
+  "uischema": {
+    "type": "VerticalLayout",
+    "elements": [
+      {
+        "type": "Group",
+        "label": "Specify if accessing Intelligence Hub via a custom hostname or reverse proxy, or through IEM remote access instead of directly on the Edge Device network.",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/deviceHostname",
+            "label": "Hostname (defaults to Edge Device IP)",
+            "options": {
+              "placeholder": "192.0.2.100"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "dataschema": {
+    "type": "object",
+    "properties": {
+      "deviceHostname": {
+        "type": "string",
+        "anyOf": [
+          {
+            "format": "hostname"
+          },
+          {
+            "format": "ipv4"
+          }
+        ],
+        "description": "e.g. iem.example.com or 192.0.2.100"
+      }
+    }
+  }
+}

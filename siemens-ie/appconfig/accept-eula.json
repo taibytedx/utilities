@@ -1,0 +1,32 @@
+{
+  "dataschema": {
+    "type": "object",
+    "properties": {
+      "acceptEula": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "acceptEula"
+    ]
+  },
+  "uischema": {
+    "type": "VerticalLayout",
+    "elements": [
+      {
+        "type": "Group",
+        "label": "Review and accept the HighByte Intelligence Hub End User License Agreement: https://www.highbyte.com/hubfs/highbyte_intelligence_hub_eula.pdf",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/acceptEula",
+            "label": "I accept the End User License Agreement",
+            "options": {
+              "toggle": true
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
