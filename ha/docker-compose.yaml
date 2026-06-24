@@ -2,7 +2,7 @@ services:
   halgtm:
     image: grafana/otel-lgtm
     container_name: halgtm
-    hostname: halgtm
+    #hostname: halgtm
     ports:
       - 3400:3000
       - 4417:4317
@@ -226,8 +226,9 @@ services:
       - 48032:1885
     networks:
       - mqttnet
+      - otelnet
     environment:
-      JAVA_OPTS: >-
+      JDK_JAVA_OPTIONS: >-
         -XX:+HeapDumpOnOutOfMemoryError
         -XX:+CrashOnOutOfMemoryError
         -javaagent:lib/opentelemetry-javaagent.jar
