@@ -1,0 +1,45 @@
+{
+	"productInfo": {
+		"company": "HighByte",
+		"product": "IntelligenceHub",
+		"version": "4.5.0",
+		"build": "2026.8.7.372",
+		"stage": "Alpha"
+	},
+	"project": {
+		"version": 14,
+		"connections": [],
+		"inputs": [],
+		"outputs": [],
+		"modeling": {
+			"models": [],
+			"instances": []
+		},
+		"conditions": [],
+		"functions": [],
+		"tags": [],
+		"pipelines": [],
+		"namespace": [],
+		"lookupMap": [],
+		"servers": {
+			"i3x": {
+				"historyReadPipeline": {
+					"type": "Empty"
+				},
+				"writePipeline": {
+					"type": "Empty"
+				}
+			}
+		}
+	},
+  "network": {
+    "groups": [
+      {
+        "id": "0c504e75-3f4f-4369-a5ab-8ac40d02a1bc",
+        "name": "sandboxgrp",
+        "token": "highbyte"
+      }
+    ],
+    "hubs": []
+  }
+}

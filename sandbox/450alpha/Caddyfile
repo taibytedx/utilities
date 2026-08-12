@@ -1,0 +1,53 @@
+:80 {
+#    handle /data/openapi.json {
+#        reverse_proxy highbyteCentralNode:8885
+#    }
+
+    @central8885 path /central/mcp* /central/i3x* /central/data*
+    handle @central8885 {
+        uri strip_prefix /central
+        reverse_proxy highbyteCentralNode:8885 {
+            header_up X-Forwarded-Prefix /central
+        }
+    }
+
+    redir /central /central/ 308
+
+    handle_path /central/* {
+        reverse_proxy highbyteCentralNode:45245 {
+            header_up X-Forwarded-Prefix /central
+        }
+    }
+
+    redir /remote1 /remote1/ 308
+    handle_path /remote1/* {
+        reverse_proxy highbyteRemoteNode1:45245 {
+            header_up X-Forwarded-Prefix /remote1
+        }
+    }
+
+    redir /remote2 /remote2/ 308
+    handle_path /remote2/* {
+        reverse_proxy highbyteRemoteNode2:45245 {
+            header_up X-Forwarded-Prefix /remote2
+        }
+    }
+
+    redir /hbmqtt /hbmqtt/ 308
+    handle_path /hbmqtt/* {
+        reverse_proxy highbyteMqtt:1886 {
+            transport http {
+                read_timeout 0
+                write_timeout 0
+            }
+        }
+    }
+
+    redir /lgtm /lgtm/ 308
+    handle /lgtm/* {
+        reverse_proxy lgtm:3000 {
+            header_up X-Forwarded-Port 49995
+            header_up X-Forwarded-Proto http
+        }
+    }
+}
