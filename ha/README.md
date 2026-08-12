@@ -1,12 +1,17 @@
 ### launch an ha environment
 
 ```
+git clone --filter=blob:none --sparse https://github.com/taibytedx/utilities.git
+cd utilities
+git sparse-checkout set ha                                                                            
+git checkout main    
+
 docker compose up -d
 ```
 
 #### Monitor each node with lgtm
 
-localhost:3400
+localhost:3500
 
 Drilldown > Logs
 

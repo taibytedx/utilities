@@ -1,0 +1,28 @@
+{
+	"productInfo": {
+		"company": "HighByte",
+		"product": "IntelligenceHub",
+		"version": "4.4.2",
+		"build": "2026.5.21.2",
+		"stage": "Release"
+	},
+	"project": {
+		"version": 13,
+		"connections": [],
+		"inputs": [],
+		"outputs": [],
+		"modeling": {
+			"models": [],
+			"instances": []
+		},
+		"conditions": [],
+		"functions": [],
+		"tags": [],
+		"pipelines": [],
+		"namespace": []
+	},
+	"network": {
+		"groups": [],
+		"hubs": []
+	}
+}
