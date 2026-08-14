@@ -58,7 +58,7 @@ services:
       - central-node-data:/central/appData
       - ./seedRemote:/seedRemote
       - remote-node1-data:/remote1/appData
-      - remote-node2-data:/remote2/appData
+      - staging-node-data:/staging/appData
       - hbmqtt-data:/hbMqtt/appData
     entrypoint: ["/bin/sh", "-c"]
     command:
@@ -67,8 +67,8 @@ services:
         cp -r /seedCentral/. /central/appData
         [ -f /remote1/appData/intelligencehub-configuration.json ] ||
         cp -r /seedRemote/. /remote1/appData
-        [ -f /remote2/appData/intelligencehub-configuration.json ] ||
-        cp -r /seedRemote/. /remote2/appData
+        [ -f /staging/appData/intelligencehub-configuration.json ] ||
+        cp -r /seedRemote/. /staging/appData
         [ -f /hbmqtt/appData/intelligencehub-configuration.json ] ||
         cp -r /seedRemote/. /hbMqtt/appData
         exit 0
@@ -81,7 +81,7 @@ services:
       - |
         cp -rf /seedCentral/. /central/appData
         cp -rf /seedRemote/. /remote1/appData
-        cp -rf /seedRemote/. /remote2/appData
+        cp -rf /seedRemote/. /staging/appData
         echo "Force-reseeded all nodes from seed files"
     profiles: ["reset"] # docker compose --profile reset up -d resetCentralHub
 
@@ -131,19 +131,19 @@ services:
         -Dotel.service.name=HBIHExtra
       PUBLIC_hostname: highbyteRemoteNode1
 
-  highbyteRemoteNode2:
+  highbyteStagingNode:
     extends:
       service: highbyteCentralNode
-    hostname: Remote2Hostname
+    hostname: StagingHostname
     #ports: !override 49992:45245
     volumes:
-      - remote-node2-data:/usr/local/highbyte/appData
+      - staging-node-data:/usr/local/highbyte/appData
     environment:
-      OTEL_RESOURCE_ATTRIBUTES: service.name=HBIHResource,service.instance.id=Remote2Resource
+      OTEL_RESOURCE_ATTRIBUTES: service.name=HBIHResource,service.instance.id=StagingResource
       OTEL_AGENT_PROPERTIES_EXTRA:  >-
-        -Dotel.service.instance.id=Node2Extra
+        -Dotel.service.instance.id=StagingExtra
         -Dotel.service.name=HBIHExtra
-      PUBLIC_hostname: RemoteNode2
+      PUBLIC_hostname: StagingNode
 
   highbyteMqtt:
     extends:
@@ -170,7 +170,7 @@ volumes:
   postgresVol:
   central-node-data:
   remote-node1-data:
-  remote-node2-data:
+  staging-node-data:
   hbmqtt-data:
   caddy-data:
   caddy-config:

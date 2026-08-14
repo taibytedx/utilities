@@ -11,11 +11,11 @@
         }
     }
 
-    redir /central /central/ 308
+    redir /central/config /central/config/ 308
 
-    handle_path /central/* {
+    handle_path /central/config/* {
         reverse_proxy highbyteCentralNode:45245 {
-            header_up X-Forwarded-Prefix /central/
+            header_up X-Forwarded-Prefix /central/config/
         }
     }
 
@@ -26,17 +26,25 @@
             header_up X-Forwarded-Prefix /remote1
         }
     }
-    redir /remote1 /remote1/ 308
-    handle_path /remote1/* {
+    redir /remote1/config /remote1/config/ 308
+    handle_path /remote1/config/* {
         reverse_proxy highbyteRemoteNode1:45245 {
-            header_up X-Forwarded-Prefix /remote1
+            header_up X-Forwarded-Prefix /remote1/config/
         }
     }
 
-    redir /remote2 /remote2/ 308
-    handle_path /remote2/* {
-        reverse_proxy highbyteRemoteNode2:45245 {
-            header_up X-Forwarded-Prefix /remote2
+    @staging8885 path /staging/mcp* /staging/i3x* /staging/data*
+    handle @staging8885 {
+        uri strip_prefix /staging
+        reverse_proxy highbyteStagingNode:8885 {
+            header_up X-Forwarded-Prefix /staging
+        }
+    }
+
+    redir /staging/config /staging/config/ 308
+    handle_path /staging/config/* {
+        reverse_proxy highbyteStagingNode:45245 {
+            header_up X-Forwarded-Prefix /staging/config
         }
     }
 

@@ -53,6 +53,8 @@ Local Docker Compose stack for testing a Highbyte Intelligence Hub central node,
 
    See [Caddyfile.diagram.md](Caddyfile.diagram.md) for the full routing breakdown.
 
+   Log in with the `administrator` user preconfigured in `seedCentral/intelligencehub-users.json` / `seedRemote/intelligencehub-users.json` — default password `highbyte`.
+
 ## Optional services
 
 Start Postgres and/or the LGTM observability stack alongside the core stack:
