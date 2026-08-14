@@ -5,7 +5,8 @@ Local Docker Compose stack for testing a Highbyte Intelligence Hub central node,
 ## Prerequisites
 
 - Docker and Docker Compose
-- A `.env` file in this directory setting `IMAGE_VERSION` to the Highbyte image to use (referenced by [docker-compose.yaml](docker-compose.yaml)):
+- Access to the latest Highbyte Intelligence Hub **Alpha** image
+- A `.env` file in this directory setting `IMAGE_VERSION` to that image (referenced by [docker-compose.yaml](docker-compose.yaml)):
 
   ```
   IMAGE_VERSION=<registry>/<image>:<tag>
@@ -18,7 +19,7 @@ Local Docker Compose stack for testing a Highbyte Intelligence Hub central node,
 | `caddy` | Reverse proxy, exposes everything on host port `49995` | default |
 | `highbyteCentralNode` | Central Intelligence Hub node | default |
 | `highbyteRemoteNode1` | Remote node 1 | default |
-| `highbyteRemoteNode2` | Remote node 2 | default |
+| `highbyteStagingNode` | Staging node | default |
 | `highbyteMqtt` | MQTT-connected node | default |
 | `initCentralHub` | Seeds app data volumes from `seedCentral`/`seedRemote` if not already present | `init` |
 | `resetCentralHub` | **Force**-reseeds all node app data, overwriting current config | `reset` |
@@ -43,11 +44,12 @@ Local Docker Compose stack for testing a Highbyte Intelligence Hub central node,
 
    | Path | Routes to |
    |---|---|
-   | `/central/` | Central node UI |
+   | `/central/config/` | Central node UI |
    | `/central/mcp*`, `/central/i3x*`, `/central/data*` | Central node API (`:8885`) |
-   | `/remote1/` | Remote node 1 UI |
+   | `/remote1/config/` | Remote node 1 UI |
    | `/remote1/mcp*`, `/remote1/i3x*`, `/remote1/data*` | Remote node 1 API (`:8885`) |
-   | `/remote2/` | Remote node 2 UI |
+   | `/staging/config/` | Staging node UI |
+   | `/staging/mcp*`, `/staging/i3x*`, `/staging/data*` | Staging node API (`:8885`) |
    | `/hbmqtt/` | MQTT node |
    | `/lgtm/` | Grafana (if started, see below) |
 
