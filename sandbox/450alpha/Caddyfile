@@ -7,7 +7,7 @@
     handle @central8885 {
         uri strip_prefix /central
         reverse_proxy highbyteCentralNode:8885 {
-            header_up X-Forwarded-Prefix /central
+            header_up X-Forwarded-Prefix /central/
         }
     }
 
@@ -15,10 +15,17 @@
 
     handle_path /central/* {
         reverse_proxy highbyteCentralNode:45245 {
-            header_up X-Forwarded-Prefix /central
+            header_up X-Forwarded-Prefix /central/
         }
     }
 
+    @remote18885 path /remote1/mcp* /remote1/i3x* /remote1/data*
+    handle @remote18885 {
+        uri strip_prefix /remote1
+        reverse_proxy highbyteRemote1Node:8885 {
+            header_up X-Forwarded-Prefix /remote1
+        }
+    }
     redir /remote1 /remote1/ 308
     handle_path /remote1/* {
         reverse_proxy highbyteRemoteNode1:45245 {
