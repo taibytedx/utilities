@@ -80,8 +80,8 @@ services:
     command:
       - |
         cp -rf /seedCentral/. /central/appData
-        #cp -rf /seedRemote/. /remote1/appData
-        #cp -rf /seedRemote/. /staging/appData
+        cp -rf /seedRemote/. /remote1/appData
+        cp -rf /seedRemote/. /staging/appData
         echo "Force-reseeded all nodes from seed files"
     profiles: ["reset"] # docker compose --profile reset up -d resetCentralHub
 
