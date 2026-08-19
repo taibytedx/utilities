@@ -2,6 +2,24 @@
 
 Local Docker Compose stack for testing a Highbyte Intelligence Hub central node, a remote node, a staging node, and an MQTT node, fronted by a Caddy reverse proxy. Optional Postgres and Grafana/OTel (LGTM) observability services are included behind profiles.
 
+## Getting just this directory
+
+To pull down only `450alpha/` instead of the whole repo, use a cone-mode sparse checkout:
+
+```bash
+git clone --no-checkout --filter=blob:none <repo-url> <local-dir>
+cd <local-dir>
+git sparse-checkout init --cone
+git sparse-checkout set utilities/sandbox/450alpha
+git checkout <branch>
+```
+
+If you already have a sparse checkout of the repo and just want to add this directory to it:
+
+```bash
+git sparse-checkout add utilities/sandbox/450alpha
+```
+
 ## Prerequisites
 
 - Docker and Docker Compose
