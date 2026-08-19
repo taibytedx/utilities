@@ -52,6 +52,12 @@ git sparse-checkout add utilities/sandbox/450alpha
    docker compose --profile init up -d initCentralHub
    ```
 
+   This copies:
+   - Into the central node: `intelligencehub-configuration.json`, which defines the `sandboxgrp` network group and its link token (`highbyte`), and `intelligencehub-users.json`, which preconfigures the `administrator` and `nibbler` logins.
+   - Into each of the remote1, staging, and MQTT nodes: `intelligencehub-remoteconfig.json`, which points the node at the central node's websocket (`ws://highbyteCentralNode:45245/websocket`) using that same token to join `sandboxgrp` for centralized config/data, plus their own copy of `intelligencehub-users.json`.
+
+   Every seeded node ends up with the same `administrator` / `highbyte` or `nibbler` / `highbyte` login, and the shared `highbyte` token is what links the remote/staging/MQTT nodes to the central node.
+
 2. Start the core stack (Caddy + the four Highbyte nodes):
 
    ```
@@ -73,7 +79,7 @@ git sparse-checkout add utilities/sandbox/450alpha
 
    See [Caddyfile.diagram.md](Caddyfile.diagram.md) for the full routing breakdown.
 
-   Log in with the `administrator` user preconfigured in `seedCentral/intelligencehub-users.json` / `seedRemote/intelligencehub-users.json` — default password `highbyte`.
+   Log in with `administrator` / `highbyte` (see the seeding details in step 1).
 
 ## Optional services
 
