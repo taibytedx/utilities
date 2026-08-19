@@ -1,4 +1,4 @@
-# 450alpha
+# 450 release
 
 Local Docker Compose stack for testing a Highbyte Intelligence Hub central node, a remote node, a staging node, and an MQTT node, fronted by a Caddy reverse proxy. Optional Postgres and Grafana/OTel (LGTM) observability services are included behind profiles.
 
@@ -77,9 +77,30 @@ git sparse-checkout add utilities/sandbox/450alpha
    | `/hbmqtt/` | MQTT node |
    | `/lgtm/` | Grafana (if started, see below) |
 
-   See [Caddyfile.diagram.md](Caddyfile.diagram.md) for the full routing breakdown.
-
    Log in with `administrator` / `highbyte` (see the seeding details in step 1).
+
+## Routing
+
+Structure of the `:80` site block in [Caddyfile](Caddyfile):
+
+```
+:80
+├── /central
+│   ├── mcp*, i3x*, data*   →  highbyteCentralNode:8885   (prefix stripped)
+│   └── /config/*           →  highbyteCentralNode:45245
+├── /remote1
+│   ├── mcp*, i3x*, data*   →  highbyteRemote1Node:8885   (prefix stripped)
+│   └── /config/*           →  highbyteRemote1Node:45245
+├── /staging
+│   ├── mcp*, i3x*, data*   →  highbyteStagingNode:8885   (prefix stripped)
+│   └── /config/*           →  highbyteStagingNode:45245
+├── /hbmqtt
+│   └── /*                  →  highbyteMqtt:1886  (streaming, no timeout)
+└── /lgtm
+    └── /*                  →  lgtm:3000
+```
+
+The `/central`, `/remote1`, and `/staging` groups all follow the same pattern: an optional `handle @matcher` block for API-style subpaths (`mcp*`, `i3x*`, `data*`) hitting the `:8885` port with the prefix stripped, plus a `redir` from the bare `/config` path to `/config/` and a `handle_path` for everything under `/config/*` to the `:45245` UI port. `hbmqtt` and `lgtm` skip the `:8885` API block and route straight to their single backend.
 
 ## Optional services
 

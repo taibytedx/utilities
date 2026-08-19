@@ -1,7 +1,4 @@
 :80 {
-#    handle /data/openapi.json {
-#        reverse_proxy highbyteCentralNode:8885
-#    }
 
     @central8885 path /central/mcp* /central/i3x* /central/data*
     handle @central8885 {
