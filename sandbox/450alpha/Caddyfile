@@ -23,12 +23,12 @@
     handle @remote18885 {
         uri strip_prefix /remote1
         reverse_proxy highbyteRemote1Node:8885 {
-            header_up X-Forwarded-Prefix /remote1
+            header_up X-Forwarded-Prefix /remote1/
         }
     }
     redir /remote1/config /remote1/config/ 308
     handle_path /remote1/config/* {
-        reverse_proxy highbyteRemoteNode1:45245 {
+        reverse_proxy highbyteRemote1Node:45245 {
             header_up X-Forwarded-Prefix /remote1/config/
         }
     }

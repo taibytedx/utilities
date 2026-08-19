@@ -57,7 +57,7 @@ services:
       - ./seedCentral:/seedCentral
       - central-node-data:/central/appData
       - ./seedRemote:/seedRemote
-      - remote-node1-data:/remote1/appData
+      - remote1-node-data:/remote1/appData
       - staging-node-data:/staging/appData
       - hbmqtt-data:/hbMqtt/appData
     entrypoint: ["/bin/sh", "-c"]
@@ -80,8 +80,8 @@ services:
     command:
       - |
         cp -rf /seedCentral/. /central/appData
-        cp -rf /seedRemote/. /remote1/appData
-        cp -rf /seedRemote/. /staging/appData
+        #cp -rf /seedRemote/. /remote1/appData
+        #cp -rf /seedRemote/. /staging/appData
         echo "Force-reseeded all nodes from seed files"
     profiles: ["reset"] # docker compose --profile reset up -d resetCentralHub
 
@@ -118,18 +118,18 @@ services:
       retries: 3
       start_period: 60s  # JVM startup takes time
 
-  highbyteRemoteNode1:
+  highbyteRemote1Node:
     extends:
       service: highbyteCentralNode
     hostname: Remote1Hostname
     volumes:
-      - remote-node1-data:/usr/local/highbyte/appData
+      - remote1-node-data:/usr/local/highbyte/appData
     environment:
-      OTEL_RESOURCE_ATTRIBUTES: service.name=HBIHResource,service.instance.id=Node1Resource
+      OTEL_RESOURCE_ATTRIBUTES: service.name=HBIHResource,service.instance.id=Remote1Resource
       OTEL_AGENT_PROPERTIES_EXTRA:  >-
-        -Dotel.service.instance.id=Node1Extra
+        -Dotel.service.instance.id=Remote1Extra
         -Dotel.service.name=HBIHExtra
-      PUBLIC_hostname: highbyteRemoteNode1
+      PUBLIC_hostname: highbyteRemote1
 
   highbyteStagingNode:
     extends:
@@ -164,12 +164,12 @@ services:
       OTEL_AGENT_PROPERTIES_EXTRA:  >-
         -Dotel.service.instance.id=HbMqttExtra
         -Dotel.service.name=HBIHExtra
-      PUBLIC_hostname: hbMqttNode1
+      PUBLIC_hostname: hbMqttNode
 
 volumes:
   postgresVol:
   central-node-data:
-  remote-node1-data:
+  remote1-node-data:
   staging-node-data:
   hbmqtt-data:
   caddy-data:
