@@ -1,6 +1,6 @@
 # 450alpha
 
-Local Docker Compose stack for testing a Highbyte Intelligence Hub central node, two remote nodes, and an MQTT node, fronted by a Caddy reverse proxy. Optional Postgres and Grafana/OTel (LGTM) observability services are included behind profiles.
+Local Docker Compose stack for testing a Highbyte Intelligence Hub central node, a remote node, a staging node, and an MQTT node, fronted by a Caddy reverse proxy. Optional Postgres and Grafana/OTel (LGTM) observability services are included behind profiles.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Local Docker Compose stack for testing a Highbyte Intelligence Hub central node,
 |---|---|---|
 | `caddy` | Reverse proxy, exposes everything on host port `49995` | default |
 | `highbyteCentralNode` | Central Intelligence Hub node | default |
-| `highbyteRemoteNode1` | Remote node 1 | default |
+| `highbyteRemote1Node` | Remote node 1 | default |
 | `highbyteStagingNode` | Staging node | default |
 | `highbyteMqtt` | MQTT-connected node | default |
 | `initCentralHub` | Seeds app data volumes from `seedCentral`/`seedRemote` if not already present | `init` |
