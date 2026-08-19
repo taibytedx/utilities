@@ -1,8 +1,0 @@
-{
-	"remoteUrl": "ws://highbyteCentralNode:45245/websocket",
-	"token": "highbyte",
-    "features" : {
-        "centralConfig" : true,
-        "centralData" : true
-    }
-}
