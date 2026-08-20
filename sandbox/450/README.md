@@ -4,27 +4,27 @@ Local Docker Compose stack for testing a Highbyte Intelligence Hub central node,
 
 ## Getting just this directory
 
-To pull down only `450alpha/` instead of the whole repo, use a cone-mode sparse checkout:
+To pull down only `450/` instead of the whole repo, use a cone-mode sparse checkout:
 
 ```bash
 git clone --no-checkout --filter=blob:none <repo-url> <local-dir>
 cd <local-dir>
 git sparse-checkout init --cone
-git sparse-checkout set utilities/sandbox/450alpha
+git sparse-checkout set utilities/sandbox/450
 git checkout <branch>
 ```
 
 If you already have a sparse checkout of the repo and just want to add this directory to it:
 
 ```bash
-git sparse-checkout add utilities/sandbox/450alpha
+git sparse-checkout add utilities/sandbox/450
 ```
 
 ## Prerequisites
 
 - Docker and Docker Compose
 - Access to the latest Highbyte Intelligence Hub **Alpha** image
-- A `.env` file in this directory setting `IMAGE_VERSION` to that image (referenced by [docker-compose.yaml](docker-compose.yaml)):
+- A `.env` file in this directory setting `IMAGE_VERSION` to that image (referenced by [compose.yml](compose.yml)):
 
   ```
   IMAGE_VERSION=<registry>/<image>:<tag>
