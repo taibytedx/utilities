@@ -31,15 +31,15 @@ services:
     networks:
       - kafka-net
 
-  intelligence-hub450:
-    image: highbyte/intelligence-hub:4.5.0
+  ihub:
+    image: highbyte/intelligence-hub:4.5.1
     depends_on:
       init-ih:
         condition: service_completed_successfully
     environment:
       ACCEPT_EULA: Y
     volumes:
-      - hb450data:/usr/local/highbyte/appData
+      - ihub_data:/usr/local/highbyte/appData
     ports:
       - "41450:45245"
     networks:
@@ -49,16 +49,16 @@ services:
     user: 1000:1000
     volumes:
       - ./seed:/seed
-      - hb450data:/hb450/appData
+      - ihub_data:/ihub/appData
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        [ -f /hb450/intelligencehub-configuration.json ] ||
-        cp -r /seed/. /hb450/appData
+        [ -f /ihub/appData/intelligencehub-configuration.json ] ||
+        cp -r /seed/. /ihub/appData
         exit 0
 
 volumes:
-  hb450data:
+  ihub_data:
 
 networks:
   kafka-net:
