@@ -28,6 +28,19 @@ services:
       timeout: 5s
       retries: 10
 
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:latest
+    ports:
+      - 48474:8474
+    volumes:
+      - ./toxiproxy/toxiproxy.json:/toxiproxy.json
+    command: ["-host=0.0.0.0", "-config=/toxiproxy.json"]
+    networks:
+      - pgnetPrimary
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   highbytePrimaryCreate:
     image: highbyte/intelligence-hub:${IMAGE_VERSION}
     volumes:
@@ -79,9 +92,8 @@ services:
         -XX:+CrashOnOutOfMemoryError
       PUBLIC_hostname: highbytePrimary
       HIGHBYTE_STORE_PASSWORD: password
-      #URI: "jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password"
       HA_NODE_ID: node1Primary
-      HA_POSTGRES_URI: jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password
+      HA_POSTGRES_URI: jdbc:postgresql://toxiproxy:5432/hbhadb?user=highbyte&password=password
       START_MODE: HA_INIT
       OTEL_RESOURCE_ATTRIBUTES: service.name=HBIHResource,service.instance.id=PrimaryResource
       OTEL_COLLECTOR_ENDPOINT: http://lgtm:4318
@@ -91,6 +103,8 @@ services:
     depends_on:
       highbytePrimaryCreate:
         condition: service_completed_successfully
+      toxiproxy:
+        condition: service_started
 
   highbyteSecondaryNode1:
     extends:
@@ -109,6 +123,7 @@ services:
     environment:
       START_MODE: HA_JOIN
       HA_NODE_ID: node1Secondary
+      HA_POSTGRES_URI: jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password
       OTEL_RESOURCE_ATTRIBUTES: service.name=HBIHResource,service.instance.id=Secondary1Resource
       OTEL_AGENT_PROPERTIES_EXTRA:  >-
         -Dotel.service.instance.id=Secondary1Extra
@@ -135,6 +150,7 @@ services:
     environment:
       START_MODE: HA_JOIN
       HA_NODE_ID: node2Secondary
+      HA_POSTGRES_URI: jdbc:postgresql://postgres:5432/hbhadb?user=highbyte&password=password
       OTEL_RESOURCE_ATTRIBUTES: service.name=HBIHResource,service.instance.id=Secondary2Resource
       OTEL_AGENT_PROPERTIES_EXTRA:  >-
         -Dotel.service.instance.id=Secondary2Extra
