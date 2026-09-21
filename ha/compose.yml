@@ -266,8 +266,5 @@ volumes:
   
 networks:
   pgnet:
-    name: pgnet
   otelnet:
-    name: otelnet
   mqttnet:
-    name: mqttnet
