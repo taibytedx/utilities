@@ -2,7 +2,11 @@ services:
   caddy:
       image: caddy:latest
       ports:
-        - "49995:80"
+        - "80:80"
+        - "443:443"
+        - "443:443/udp"
+      environment:
+        DOMAIN: ${DOMAIN}
       volumes:
         - ./Caddyfile:/etc/caddy/Caddyfile
         - caddy-data:/data
@@ -27,9 +31,9 @@ services:
       retries: 3
       start_period: 30s
     environment:
-      GF_SERVER_ROOT_URL: http://localhost:49995/lgtm/
+      GF_SERVER_ROOT_URL: https://${DOMAIN}/lgtm/
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
-      GF_SERVER_DOMAIN: localhost
+      GF_SERVER_DOMAIN: ${DOMAIN}
 
   postgres:
     image: postgres:latest
@@ -89,7 +93,8 @@ services:
     image: ${IMAGE_VERSION}
     hostname: CentralHostname
     #ports: 
-    #  - 49990:45245
+    #  - 43990:45245
+    #  - 43995:8885
     expose:
       - 45245
       - 8885
@@ -151,7 +156,9 @@ services:
     hostname: hbMqttHostname
     volumes:
       - hbmqtt-data:/usr/local/highbyte/appData
-    #ports: !override 49993:45245
+    ports: !override
+      - 49993:45245
+      - 1886:1886
     expose:
       - 45245
       - 1885
