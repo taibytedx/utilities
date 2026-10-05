@@ -1,0 +1,1029 @@
+{
+	"productInfo": {
+		"company": "HighByte",
+		"product": "IntelligenceHub",
+		"version": "4.5.0",
+		"build": "2026.8.14.399",
+		"stage": "Release"
+	},
+	"project": {
+		"version": 14,
+		"connections": [
+			{
+				"name": "kafka",
+				"uri": "kafka://kafka",
+				"tags": [
+					"_test_kafka_avro"
+				],
+				"writes": {
+					"flattenModeledValues": false
+				},
+				"writeThrottle": {
+					"enabled": false,
+					"maxBatchSizePerTarget": 1000,
+					"batchDelay": {
+						"duration": 20,
+						"units": "Milliseconds"
+					}
+				},
+				"subscriptions": {},
+				"storeForward": {
+					"enabled": false,
+					"maxEntries": 100,
+					"waitOnFailureInterval": {
+						"duration": 1,
+						"units": "Seconds"
+					}
+				},
+				"settings": {
+					"securityType": "PLAINTEXT",
+					"brokerURIs": "kafka:9094",
+					"caCert": "",
+					"clientKey": ""
+				}
+			},
+			{
+				"name": "mqtt",
+				"uri": "mqtt://localhost:1885",
+				"tags": [
+					"AbstractedPipeline",
+					"starter_solution",
+					"SourceNamespace",
+					"_test_kafka_avro"
+				],
+				"writes": {
+					"flattenModeledValues": false
+				},
+				"writeThrottle": {
+					"enabled": false,
+					"maxBatchSizePerTarget": 1000,
+					"batchDelay": {
+						"duration": 20,
+						"units": "Milliseconds"
+					}
+				},
+				"subscriptions": {},
+				"storeForward": {
+					"enabled": false,
+					"maxEntries": 100,
+					"waitOnFailureInterval": {
+						"duration": 1,
+						"units": "Seconds"
+					}
+				},
+				"settings": {
+					"connectionTimeoutSeconds": 10,
+					"keepAliveSeconds": 60,
+					"requestTimeoutMS": 5000,
+					"cleanSession": true,
+					"clientId": "mqtt",
+					"ssl": false,
+					"redundantBrokers": [],
+					"maxInflight": 1000,
+					"inputDiscovery": "",
+					"maxMessagesReceived": 0
+				}
+			},
+			{
+				"name": "schema_registry",
+				"uri": "rest.client://schema_registry",
+				"tags": [
+					"_test_kafka_avro"
+				],
+				"writes": {
+					"flattenModeledValues": false
+				},
+				"writeThrottle": {
+					"enabled": false,
+					"maxBatchSizePerTarget": 1000,
+					"batchDelay": {
+						"duration": 20,
+						"units": "Milliseconds"
+					}
+				},
+				"subscriptions": {},
+				"storeForward": {
+					"enabled": false,
+					"maxEntries": 100,
+					"waitOnFailureInterval": {
+						"duration": 1,
+						"units": "Seconds"
+					}
+				},
+				"settings": {
+					"authentication": {
+						"type": "None"
+					},
+					"baseURL": "http://schema-registry:8081"
+				}
+			}
+		],
+		"inputs": [
+			{
+				"name": "sensor_readings",
+				"connection": "kafka",
+				"type": "kafka",
+				"qualifier": {
+					"fromOffset": "earliest",
+					"keyFormat": "any",
+					"valueFormat": "any",
+					"maxMessages": 1,
+					"topic": "sensor-readings",
+					"group": "2",
+					"includeMetadata": true
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "EmptyParameters"
+				}
+			},
+			{
+				"name": "sensor_readings_test",
+				"connection": "kafka",
+				"type": "kafka",
+				"qualifier": {
+					"fromOffset": "earliest",
+					"keyFormat": "any",
+					"valueFormat": "any",
+					"maxMessages": 1,
+					"topic": "test",
+					"group": "2",
+					"includeMetadata": true
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "EmptyParameters"
+				}
+			},
+			{
+				"name": "spb",
+				"connection": "mqtt",
+				"type": "mqtt",
+				"qualifier": {
+					"inputType": "LastPublish",
+					"payloadType": "any",
+					"qos": 0,
+					"topic": "spBv1.0/HighByte IntelligenceHub/NDATA/hostname/#",
+					"includeTopic": false,
+					"type": "Tag"
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "EmptyParameters"
+				}
+			},
+			{
+				"name": "spbplus",
+				"connection": "mqtt",
+				"type": "mqtt",
+				"qualifier": {
+					"inputType": "LastPublish",
+					"payloadType": "any",
+					"qos": 0,
+					"topic": "spBv1.0/+/DDATA/Area-1.Line-1/Motor002",
+					"includeTopic": false,
+					"type": "Tag"
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "EmptyParameters"
+				}
+			},
+			{
+				"name": "test",
+				"connection": "mqtt",
+				"type": "mqtt",
+				"qualifier": {
+					"inputType": "LastPublish",
+					"payloadType": "json",
+					"qos": 0,
+					"topic": "#",
+					"includeTopic": true,
+					"type": "Tag"
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "EmptyParameters"
+				}
+			},
+			{
+				"name": "wild",
+				"connection": "mqtt",
+				"type": "mqtt",
+				"qualifier": {
+					"inputType": "LastPublish",
+					"payloadType": "any",
+					"qos": 0,
+					"topic": "spBv1.0/#",
+					"includeTopic": true,
+					"type": "Tag"
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "EmptyParameters"
+				}
+			},
+			{
+				"name": "wild_plus",
+				"connection": "mqtt",
+				"type": "mqtt",
+				"qualifier": {
+					"inputType": "LastPublish",
+					"payloadType": "any",
+					"qos": 0,
+					"topic": "spBv1.0/+/NBIRTH/#",
+					"includeTopic": false,
+					"type": "Tag"
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "EmptyParameters"
+				}
+			},
+			{
+				"name": "getschema",
+				"connection": "schema_registry",
+				"type": "rest.client",
+				"qualifier": {
+					"acceptType": "*/*",
+					"method": "GET",
+					"contentType": "application/json",
+					"includeMetadata": false,
+					"endpointURL": "/schemas/ids/{{this.schemaId}}"
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "inline",
+					"model": {
+						"name": "params",
+						"tags": [],
+						"attributes": [
+							{
+								"attributeType": "Internal",
+								"name": "schemaId",
+								"nullable": false,
+								"required": false,
+								"array": false,
+								"defaultValue": 1,
+								"internalType": {
+									"variant": "String"
+								}
+							}
+						],
+						"modelVersion": ""
+					}
+				}
+			},
+			{
+				"name": "registerSchema",
+				"connection": "schema_registry",
+				"type": "rest.client",
+				"qualifier": {
+					"acceptType": "*/*",
+					"method": "POST",
+					"contentType": "application/json",
+					"includeMetadata": true,
+					"endpointURL": "/subjects/sensor-readings-value/versions",
+					"body": "{{this.requestBody}}",
+					"isFile": false
+				},
+				"cacheLifetime": {
+					"enabled": false
+				},
+				"template": {
+					"type": "Off"
+				},
+				"referenceMap": [],
+				"parameters": {
+					"type": "inline",
+					"model": {
+						"name": "params",
+						"tags": [],
+						"attributes": [
+							{
+								"attributeType": "Internal",
+								"name": "requestBody",
+								"nullable": false,
+								"required": false,
+								"array": false,
+								"internalType": {
+									"variant": "String"
+								}
+							}
+						],
+						"modelVersion": ""
+					}
+				}
+			}
+		],
+		"outputs": [
+			{
+				"name": "test",
+				"connection": "kafka",
+				"type": "kafka",
+				"qualifier": {
+					"breakupArrays": false,
+					"topic": "test",
+					"key": "1"
+				}
+			}
+		],
+		"modeling": {
+			"models": [
+				{
+					"name": "_test_avro_model",
+					"description": "Created from payload:\nAnyValue(type=ComplexData, value={\"id\":\"1788848865929-0.568066361735278\",\"device_id\":\"dev-5949\",\"site\":\"Plant-B\",\"sensor_type\":\"HUMIDITY\",\"value\":83.03,\"unit\":\"%\",\"quality\":192,\"timestamp\":1788848865929})",
+					"tags": [
+						"_test_kafka_avro"
+					],
+					"attributes": [
+						{
+							"attributeType": "Internal",
+							"name": "id",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": {
+								"variant": "String"
+							}
+						},
+						{
+							"attributeType": "Internal",
+							"name": "device_id",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": {
+								"variant": "String"
+							}
+						},
+						{
+							"attributeType": "Internal",
+							"name": "site",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": {
+								"variant": "String"
+							}
+						},
+						{
+							"attributeType": "Internal",
+							"name": "sensor_type",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": {
+								"variant": "Enum",
+								"enumValues": [
+									"TEMPERATURE",
+									"PRESSURE",
+									"VIBRATION",
+									"HUMIDITY",
+									"FLOW_RATE"
+								]
+							}
+						},
+						{
+							"attributeType": "Internal",
+							"name": "value",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": {
+								"variant": "Real64"
+							}
+						},
+						{
+							"attributeType": "Internal",
+							"name": "unit",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": {
+								"variant": "String"
+							}
+						},
+						{
+							"attributeType": "Internal",
+							"name": "quality",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": {
+								"variant": "Int64"
+							}
+						},
+						{
+							"attributeType": "Internal",
+							"name": "timestamp",
+							"nullable": false,
+							"required": false,
+							"array": false,
+							"internalType": {
+								"variant": "Int64"
+							}
+						}
+					],
+					"modelVersion": ""
+				}
+			],
+			"instances": []
+		},
+		"conditions": [],
+		"functions": [],
+		"tags": [
+			{
+				"name": "_test_kafka_avro"
+			}
+		],
+		"pipelines": [
+			{
+				"name": "_test_avro_reader",
+				"tags": [
+					"_test_kafka_avro"
+				],
+				"inputStages": [
+					"read_kafka"
+				],
+				"stages": [
+					{
+						"name": "mqtt_read_kafka",
+						"display": {
+							"position": {
+								"x": 690,
+								"y": 67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.mqtt}}",
+							"eventPath": "",
+							"connectionType": "mqtt",
+							"qualifier": {
+								"topic": "_test_avro_reader/1_read_kafka",
+								"qos": 0,
+								"namedRoot": false,
+								"retained": false,
+								"breakupArrays": false
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "decoder",
+						"display": {
+							"position": {
+								"x": 1590,
+								"y": 0
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".JavaScriptTransformConfig",
+							"transformExpression": "// --- Low-level readers ---\r\n\r\nfunction readVarInt(bytes, offset) {\r\n  let result = 0, shift = 0, b;\r\n  do {\r\n    b = bytes[offset++];\r\n    result |= (b & 0x7f) << shift;\r\n    shift += 7;\r\n  } while (b & 0x80);\r\n  return { value: (result >>> 1) ^ -(result & 1), offset }; // zigzag decode\r\n}\r\n\r\nfunction readLongVarInt(bytes, offset) {\r\n  let result = 0n, shift = 0n, b;\r\n  do {\r\n    b = BigInt(bytes[offset++]);\r\n    result |= (b & 0x7fn) << shift;\r\n    shift += 7n;\r\n  } while (b & 0x80n);\r\n  const zigzag = (result >> 1n) ^ (-(result & 1n));\r\n  return { value: zigzag, offset };\r\n}\r\n\r\nfunction readFloat(bytes, offset) {\r\n  const buf = new ArrayBuffer(4);\r\n  const view = new DataView(buf);\r\n  for (let i = 0; i < 4; i++) view.setUint8(i, bytes[offset + i]);\r\n  return { value: view.getFloat32(0, true), offset: offset + 4 };\r\n}\r\n\r\nfunction readDouble(bytes, offset) {\r\n  const buf = new ArrayBuffer(8);\r\n  const view = new DataView(buf);\r\n  for (let i = 0; i < 8; i++) view.setUint8(i, bytes[offset + i]);\r\n  return { value: view.getFloat64(0, true), offset: offset + 8 };\r\n}\r\n\r\nfunction readBytesRaw(bytes, offset, len) {\r\n  return { value: bytes.slice(offset, offset + len), offset: offset + len };\r\n}\r\n\r\nfunction utf8Decode(bytes, offset, len) {\r\n  let str = \"\";\r\n  for (let i = 0; i < len; i++) str += String.fromCharCode(bytes[offset + i]);\r\n  return decodeURIComponent(escape(str));\r\n}\r\n\r\n// --- Named type resolution (records/enums/fixed referenced by name elsewhere in the schema) ---\r\n\r\nfunction resolveType(type, namedTypes) {\r\n  if (typeof type === \"string\" && namedTypes[type]) return namedTypes[type];\r\n  return type;\r\n}\r\n\r\nfunction registerNamedType(type, namedTypes) {\r\n  if (type && type.name) {\r\n    const fullName = type.namespace ? `${type.namespace}.${type.name}` : type.name;\r\n    namedTypes[fullName] = type;\r\n    namedTypes[type.name] = type;\r\n  }\r\n}\r\n\r\n// --- Core recursive decoder ---\r\n\r\nfunction decodeValue(type, bytes, offset, namedTypes) {\r\n  type = resolveType(type, namedTypes);\r\n\r\n  // Union: zigzag-varint branch index, then that branch's value\r\n  if (Array.isArray(type)) {\r\n    const r = readVarInt(bytes, offset);\r\n    return decodeValue(type[r.value], bytes, r.offset, namedTypes);\r\n  }\r\n\r\n  const typeName = typeof type === \"string\" ? type : type.type;\r\n\r\n  switch (typeName) {\r\n    case \"null\":\r\n      return { value: null, offset };\r\n    case \"boolean\":\r\n      return { value: bytes[offset] !== 0, offset: offset + 1 };\r\n    case \"int\": {\r\n      const r = readVarInt(bytes, offset);\r\n      return { value: r.value, offset: r.offset };\r\n    }\r\n    case \"long\": {\r\n      const r = readLongVarInt(bytes, offset);\r\n      return { value: Number(r.value), offset: r.offset };\r\n    }\r\n    case \"float\":\r\n      return readFloat(bytes, offset);\r\n    case \"double\":\r\n      return readDouble(bytes, offset);\r\n    case \"bytes\": {\r\n      const lenR = readVarInt(bytes, offset);\r\n      return readBytesRaw(bytes, lenR.offset, lenR.value);\r\n    }\r\n    case \"string\": {\r\n      const lenR = readVarInt(bytes, offset);\r\n      const str = utf8Decode(bytes, lenR.offset, lenR.value);\r\n      return { value: str, offset: lenR.offset + lenR.value };\r\n    }\r\n    case \"fixed\": {\r\n      registerNamedType(type, namedTypes);\r\n      return readBytesRaw(bytes, offset, type.size);\r\n    }\r\n    case \"enum\": {\r\n      registerNamedType(type, namedTypes);\r\n      const r = readVarInt(bytes, offset);\r\n      return { value: type.symbols[r.value], offset: r.offset };\r\n    }\r\n    case \"array\": {\r\n      let result = [];\r\n      let curOffset = offset;\r\n      while (true) {\r\n        const countR = readVarInt(bytes, curOffset);\r\n        curOffset = countR.offset;\r\n        let count = countR.value;\r\n        if (count === 0) break;\r\n        if (count < 0) {\r\n          count = -count;\r\n          curOffset += 4; // skip block byte-size for negative-count blocks\r\n        }\r\n        for (let i = 0; i < count; i++) {\r\n          const itemR = decodeValue(type.items, bytes, curOffset, namedTypes);\r\n          result.push(itemR.value);\r\n          curOffset = itemR.offset;\r\n        }\r\n      }\r\n      return { value: result, offset: curOffset };\r\n    }\r\n    case \"map\": {\r\n      let result = {};\r\n      let curOffset = offset;\r\n      while (true) {\r\n        const countR = readVarInt(bytes, curOffset);\r\n        curOffset = countR.offset;\r\n        let count = countR.value;\r\n        if (count === 0) break;\r\n        if (count < 0) {\r\n          count = -count;\r\n          curOffset += 4;\r\n        }\r\n        for (let i = 0; i < count; i++) {\r\n          const keyR = decodeValue(\"string\", bytes, curOffset, namedTypes);\r\n          curOffset = keyR.offset;\r\n          const valR = decodeValue(type.values, bytes, curOffset, namedTypes);\r\n          curOffset = valR.offset;\r\n          result[keyR.value] = valR.value;\r\n        }\r\n      }\r\n      return { value: result, offset: curOffset };\r\n    }\r\n    case \"record\": {\r\n      registerNamedType(type, namedTypes);\r\n      let record = {};\r\n      let curOffset = offset;\r\n      for (const field of type.fields) {\r\n        const fieldR = decodeValue(field.type, bytes, curOffset, namedTypes);\r\n        record[field.name] = fieldR.value;\r\n        curOffset = fieldR.offset;\r\n      }\r\n      return { value: record, offset: curOffset };\r\n    }\r\n    default:\r\n      throw new Error(`Unsupported Avro type: ${typeName}`);\r\n  }\r\n}\r\n\r\n// --- Entry point ---\r\n\r\nfunction decodeAvro(schemaJsonString, bytes) {\r\n  const schema = JSON.parse(schemaJsonString);\r\n  const namedTypes = {};\r\n  const result = decodeValue(schema, bytes, 0, namedTypes);\r\n  return result.value;\r\n}\r\n\r\n// --- Main stage logic ---\r\n\r\n// input.value: raw signed-byte array from the Kafka Binary input\r\nconst signedBytes = event.metadata.avroPayload;\r\nconst schemaJsonString = event.value.schema; // schema string fetched by the Read stage\r\n\r\n// Strip 5-byte Confluent wire-format header: [magic byte][4-byte schema ID]\r\nconst avroPayload = event.metadata.avroPayload; // stripped payload from Stage 1\r\nconst record = decodeAvro(schemaJsonString, avroPayload);\r\n\r\nstage.setValue(record);"
+						},
+						"outputs": [
+							"Model",
+							"mqtt_decoded_payload"
+						]
+					},
+					{
+						"name": "get_schema",
+						"display": {
+							"position": {
+								"x": 1140,
+								"y": -67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".ReadConfig",
+							"failureOutputs": [],
+							"reference": {
+								"type": "Input",
+								"name": "getschema",
+								"path": "",
+								"params": {
+									"schemaId": "{{event.metadata.schemaId}}"
+								},
+								"connectionName": "schema_registry"
+							},
+							"handleGoodNoData": false,
+							"goodNoDataOutputs": []
+						},
+						"outputs": [
+							"mqtt_get_schema",
+							"decoder"
+						]
+					},
+					{
+						"name": "mqtt_decoded_payload",
+						"display": {
+							"position": {
+								"x": 2040,
+								"y": 67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.mqtt}}",
+							"eventPath": "",
+							"connectionType": "mqtt",
+							"qualifier": {
+								"topic": "_test_avro_reader/3_decoded_payload",
+								"qos": 0,
+								"namedRoot": false,
+								"retained": false,
+								"breakupArrays": false
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "mqtt_get_schema",
+						"display": {
+							"position": {
+								"x": 1590,
+								"y": -135
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.mqtt}}",
+							"eventPath": "",
+							"connectionType": "mqtt",
+							"qualifier": {
+								"topic": "_test_avro_reader/2_get_schema",
+								"qos": 0,
+								"namedRoot": false,
+								"retained": false,
+								"breakupArrays": false
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "mqtt_modeled_payload",
+						"display": {
+							"position": {
+								"x": 2490,
+								"y": -67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.mqtt}}",
+							"eventPath": "",
+							"connectionType": "mqtt",
+							"qualifier": {
+								"topic": "_test_avro_reader/4_modeled_payload",
+								"qos": 0,
+								"namedRoot": false,
+								"retained": false,
+								"breakupArrays": false
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "read_kafka",
+						"display": {
+							"position": {
+								"x": 240,
+								"y": 0
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".ReadConfig",
+							"failureOutputs": [],
+							"reference": {
+								"type": "Input",
+								"name": "sensor_readings_test",
+								"path": "",
+								"params": {},
+								"connectionName": "kafka"
+							},
+							"handleGoodNoData": false,
+							"goodNoDataOutputs": []
+						},
+						"outputs": [
+							"parse_schemaId",
+							"mqtt_read_kafka"
+						]
+					},
+					{
+						"name": "parse_schemaId",
+						"display": {
+							"position": {
+								"x": 690,
+								"y": -67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".JavaScriptTransformConfig",
+							"transformExpression": "const signedBytes = event.value.value;\r\nconst unsignedBytes = signedBytes.map(b => b & 0xFF);\r\n\r\nfunction readUInt32BE(bytes, offset) {\r\n  return (\r\n    (bytes[offset] << 24) |\r\n    (bytes[offset + 1] << 16) |\r\n    (bytes[offset + 2] << 8) |\r\n    bytes[offset + 3]\r\n  ) >>> 0;\r\n}\r\n\r\nconst schemaId = readUInt32BE(unsignedBytes, 1);\r\nconst avroPayload = unsignedBytes.slice(5);\r\n\r\nstage.setMetadata(\"schemaId\", schemaId);\r\nstage.setMetadata(\"avroPayload\",avroPayload);\r\nstage.setValue(avroPayload); // stripped payload, still a raw byte array"
+						},
+						"outputs": [
+							"get_schema"
+						]
+					},
+					{
+						"name": "Model",
+						"display": {
+							"position": {
+								"x": 2040,
+								"y": -67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".ModelConfig",
+							"model": "_test_avro_model",
+							"objectName": "",
+							"initExpression": "",
+							"attributes": [
+								{
+									"name": "id",
+									"expression": {
+										"type": "PipelineStageReference",
+										"stageReference": "event.value.id"
+									}
+								},
+								{
+									"name": "device_id",
+									"expression": {
+										"type": "PipelineStageReference",
+										"stageReference": "event.value.device_id"
+									}
+								},
+								{
+									"name": "site",
+									"expression": {
+										"type": "PipelineStageReference",
+										"stageReference": "event.value.site"
+									}
+								},
+								{
+									"name": "sensor_type",
+									"expression": {
+										"type": "PipelineStageReference",
+										"stageReference": "event.value.sensor_type"
+									}
+								},
+								{
+									"name": "value",
+									"expression": {
+										"type": "PipelineStageReference",
+										"stageReference": "event.value.value"
+									}
+								},
+								{
+									"name": "unit",
+									"expression": {
+										"type": "PipelineStageReference",
+										"stageReference": "event.value.unit"
+									}
+								},
+								{
+									"name": "quality",
+									"expression": {
+										"type": "PipelineStageReference",
+										"stageReference": "event.value.quality"
+									}
+								},
+								{
+									"name": "timestamp",
+									"expression": {
+										"type": "PipelineStageReference",
+										"stageReference": "event.value.timestamp"
+									}
+								}
+							],
+							"expandArray": false
+						},
+						"outputs": [
+							"mqtt_modeled_payload"
+						]
+					}
+				],
+				"trackActivity": false,
+				"queueSize": 10000,
+				"triggers": [
+					{
+						"name": "PolledTrigger",
+						"display": {
+							"position": {
+								"x": -450,
+								"y": 0
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".TriggerPolled",
+							"enabled": true,
+							"interval": {
+								"duration": 10,
+								"units": "Seconds"
+							},
+							"mode": "interval"
+						}
+					}
+				],
+				"errorHandler": {
+					"type": "default"
+				}
+			},
+			{
+				"name": "_test_avro_writer",
+				"tags": [
+					"_test_kafka_avro"
+				],
+				"inputStages": [
+					"define_schema"
+				],
+				"stages": [
+					{
+						"name": "mqtt_define_schema",
+						"display": {
+							"position": {
+								"x": 690,
+								"y": -67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.mqtt}}",
+							"eventPath": "",
+							"connectionType": "mqtt",
+							"qualifier": {
+								"qos": 0,
+								"namedRoot": false,
+								"retained": false,
+								"breakupArrays": false,
+								"topic": "_test_avro_writer/1_define_schema"
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "encoder",
+						"display": {
+							"position": {
+								"x": 1140,
+								"y": 135
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".JavaScriptTransformConfig",
+							"transformExpression": "// --- Low-level writers ---\r\n\r\nfunction writeVarInt(value, bytesArr) {\r\n  // zigzag encode first\r\n  let zigzag = (value << 1) ^ (value >> 31);\r\n  zigzag = zigzag >>> 0; // treat as unsigned for the shifting below\r\n  do {\r\n    let b = zigzag & 0x7f;\r\n    zigzag >>>= 7;\r\n    if (zigzag !== 0) b |= 0x80;\r\n    bytesArr.push(b);\r\n  } while (zigzag !== 0);\r\n}\r\n\r\nfunction writeLongVarInt(value, bytesArr) {\r\n  let big = BigInt(value);\r\n  let zigzag = (big << 1n) ^ (big >> 63n);\r\n  if (zigzag < 0n) zigzag += (1n << 64n); // safety for edge cases\r\n  do {\r\n    let b = Number(zigzag & 0x7fn);\r\n    zigzag >>= 7n;\r\n    if (zigzag !== 0n) b |= 0x80;\r\n    bytesArr.push(b);\r\n  } while (zigzag !== 0n);\r\n}\r\n\r\nfunction writeFloat(value, bytesArr) {\r\n  const buf = new ArrayBuffer(4);\r\n  const view = new DataView(buf);\r\n  view.setFloat32(0, value, true);\r\n  for (let i = 0; i < 4; i++) bytesArr.push(view.getUint8(i));\r\n}\r\n\r\nfunction writeDouble(value, bytesArr) {\r\n  const buf = new ArrayBuffer(8);\r\n  const view = new DataView(buf);\r\n  view.setFloat64(0, value, true);\r\n  for (let i = 0; i < 8; i++) bytesArr.push(view.getUint8(i));\r\n}\r\n\r\nfunction utf8Encode(str) {\r\n  const encoded = unescape(encodeURIComponent(str));\r\n  const bytes = [];\r\n  for (let i = 0; i < encoded.length; i++) bytes.push(encoded.charCodeAt(i));\r\n  return bytes;\r\n}\r\n\r\n// --- Named type resolution, same pattern as decoder ---\r\n\r\nfunction resolveType(type, namedTypes) {\r\n  if (typeof type === \"string\" && namedTypes[type]) return namedTypes[type];\r\n  return type;\r\n}\r\n\r\nfunction registerNamedType(type, namedTypes) {\r\n  if (type && type.name) {\r\n    const fullName = type.namespace ? `${type.namespace}.${type.name}` : type.name;\r\n    namedTypes[fullName] = type;\r\n    namedTypes[type.name] = type;\r\n  }\r\n}\r\n\r\n// --- Core recursive encoder ---\r\n\r\nfunction encodeValue(type, value, bytesArr, namedTypes) {\r\n  type = resolveType(type, namedTypes);\r\n\r\n  // Union: find which branch matches, write its index, then its value\r\n  if (Array.isArray(type)) {\r\n    for (let i = 0; i < type.length; i++) {\r\n      const branchType = resolveType(type[i], namedTypes);\r\n      const branchName = typeof branchType === \"string\" ? branchType : branchType.type;\r\n      if (\r\n        (branchName === \"null\" && value === null) ||\r\n        (branchName === \"boolean\" && typeof value === \"boolean\") ||\r\n        ((branchName === \"int\" || branchName === \"long\") && typeof value === \"number\") ||\r\n        ((branchName === \"float\" || branchName === \"double\") && typeof value === \"number\") ||\r\n        (branchName === \"string\" && typeof value === \"string\") ||\r\n        (branchName === \"record\" && typeof value === \"object\")\r\n      ) {\r\n        writeVarInt(i, bytesArr);\r\n        encodeValue(branchType, value, bytesArr, namedTypes);\r\n        return;\r\n      }\r\n    }\r\n    throw new Error(`No matching union branch for value: ${JSON.stringify(value)}`);\r\n  }\r\n\r\n  const typeName = typeof type === \"string\" ? type : type.type;\r\n\r\n  switch (typeName) {\r\n    case \"null\":\r\n      return; // no bytes written\r\n    case \"boolean\":\r\n      bytesArr.push(value ? 1 : 0);\r\n      return;\r\n    case \"int\":\r\n      writeVarInt(value, bytesArr);\r\n      return;\r\n    case \"long\":\r\n      writeLongVarInt(value, bytesArr);\r\n      return;\r\n    case \"float\":\r\n      writeFloat(value, bytesArr);\r\n      return;\r\n    case \"double\":\r\n      writeDouble(value, bytesArr);\r\n      return;\r\n    case \"bytes\": {\r\n      writeVarInt(value.length, bytesArr);\r\n      for (const b of value) bytesArr.push(b);\r\n      return;\r\n    }\r\n    case \"string\": {\r\n      const encoded = utf8Encode(value);\r\n      writeVarInt(encoded.length, bytesArr);\r\n      for (const b of encoded) bytesArr.push(b);\r\n      return;\r\n    }\r\n    case \"fixed\": {\r\n      registerNamedType(type, namedTypes);\r\n      for (const b of value) bytesArr.push(b);\r\n      return;\r\n    }\r\n    case \"enum\": {\r\n      registerNamedType(type, namedTypes);\r\n      const index = type.symbols.indexOf(value);\r\n      if (index === -1) throw new Error(`Invalid enum symbol: ${value}`);\r\n      writeVarInt(index, bytesArr);\r\n      return;\r\n    }\r\n    case \"array\": {\r\n      if (value.length > 0) {\r\n        writeVarInt(value.length, bytesArr);\r\n        for (const item of value) {\r\n          encodeValue(type.items, item, bytesArr, namedTypes);\r\n        }\r\n      }\r\n      writeVarInt(0, bytesArr); // terminating block of length 0\r\n      return;\r\n    }\r\n    case \"map\": {\r\n      const keys = Object.keys(value);\r\n      if (keys.length > 0) {\r\n        writeVarInt(keys.length, bytesArr);\r\n        for (const key of keys) {\r\n          encodeValue(\"string\", key, bytesArr, namedTypes);\r\n          encodeValue(type.values, value[key], bytesArr, namedTypes);\r\n        }\r\n      }\r\n      writeVarInt(0, bytesArr);\r\n      return;\r\n    }\r\n    case \"record\": {\r\n      registerNamedType(type, namedTypes);\r\n      for (const field of type.fields) {\r\n        encodeValue(field.type, value[field.name], bytesArr, namedTypes);\r\n      }\r\n      return;\r\n    }\r\n    default:\r\n      throw new Error(`Unsupported Avro type: ${typeName}`);\r\n  }\r\n}\r\n\r\n// --- Entry point ---\r\n\r\nfunction encodeAvro(schemaJsonString, record, schemaId) {\r\n  const schema = JSON.parse(schemaJsonString);\r\n  const namedTypes = {};\r\n  const bodyBytes = [];\r\n  encodeValue(schema, record, bodyBytes, namedTypes);\r\n\r\n  // Confluent wire format: [magic byte = 0][4-byte schema ID][payload]\r\n  const fullBytes = [0];\r\n  fullBytes.push((schemaId >>> 24) & 0xff);\r\n  fullBytes.push((schemaId >>> 16) & 0xff);\r\n  fullBytes.push((schemaId >>> 8) & 0xff);\r\n  fullBytes.push(schemaId & 0xff);\r\n  fullBytes.push(...bodyBytes);\r\n\r\n  return fullBytes;\r\n}\r\n\r\n\r\nconst symbols = [\"TEMPERATURE\", \"PRESSURE\", \"VIBRATION\", \"HUMIDITY\", \"FLOW_RATE\"];\r\nconst sites = [\"Plant-A\", \"Plant-B\", \"Plant-C\"];\r\nconst units = { TEMPERATURE: \"C\", PRESSURE: \"psi\", VIBRATION: \"mm/s\", HUMIDITY: \"%\", FLOW_RATE: \"L/min\" };\r\n\r\nfunction randomRecord() {\r\n  const sensorType = symbols[Math.floor(Math.random() * symbols.length)];\r\n  return {\r\n    id: `${Date.now()}-${Math.random()}`,//event.id,//crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,\r\n    device_id: `dev-${Math.floor(1000 + Math.random() * 9000)}`,\r\n    site: sites[Math.floor(Math.random() * sites.length)],\r\n    sensor_type: sensorType,\r\n    value: Math.round(Math.random() * 10000) / 100,\r\n    unit: units[sensorType],\r\n    quality: Math.random() < 0.75 ? 192 : 0,\r\n    timestamp: Date.now()\r\n  };\r\n}\r\n\r\n// schemaJsonString + schemaId assumed available from your Read Stage / State lookup\r\nconst schemaJsonString = event.metadata.schema;\r\nconst schemaId = event.value.value.id;\r\nconst record = randomRecord();\r\nconst encodedBytes = encodeAvro(schemaJsonString, record, schemaId);\r\n\r\nstage.setValue(encodedBytes);\r\nstage.setMetadata(\"payload\",record);"
+						},
+						"outputs": [
+							"mqtt_encode_payload",
+							"write_kafka"
+						]
+					},
+					{
+						"name": "define_schema",
+						"display": {
+							"position": {
+								"x": 240,
+								"y": 0
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".JavaScriptTransformConfig",
+							"transformExpression": "const sensorReadingSchema = {\r\n  type: \"record\",\r\n  name: \"SensorReading\",\r\n  namespace: \"com.example.testdata\",\r\n  fields: [\r\n    { name: \"id\", type: \"string\" },\r\n    { name: \"device_id\", type: \"string\" },\r\n    { name: \"site\", type: \"string\" },\r\n    { name: \"sensor_type\", type: { type: \"enum\", name: \"SensorType\",\r\n        symbols: [\"TEMPERATURE\", \"PRESSURE\", \"VIBRATION\", \"HUMIDITY\", \"FLOW_RATE\"] } },\r\n    { name: \"value\", type: \"double\" },\r\n    { name: \"unit\", type: \"string\" },\r\n    { name: \"quality\", type: \"int\" },\r\n    { name: \"timestamp\", type: \"long\", logicalType: \"timestamp-millis\" }\r\n  ]\r\n};\r\n\r\nconst requestBody = {\r\n  schema: JSON.stringify(sensorReadingSchema),  // stringify handles all the escaping\r\n  schemaType: \"AVRO\"\r\n};\r\n\r\nstage.setValue(requestBody);\r\nstage.setMetadata(\"schema\",requestBody.schema);"
+						},
+						"outputs": [
+							"mqtt_define_schema",
+							"register_schema"
+						]
+					},
+					{
+						"name": "mqtt_encode_payload",
+						"display": {
+							"position": {
+								"x": 1590,
+								"y": 67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.mqtt}}",
+							"eventPath": "",
+							"connectionType": "mqtt",
+							"qualifier": {
+								"qos": 0,
+								"namedRoot": false,
+								"retained": false,
+								"breakupArrays": false,
+								"topic": "_test_avro_writer/3_encoder"
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "mqtt_register_schema",
+						"display": {
+							"position": {
+								"x": 1140,
+								"y": 0
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.mqtt}}",
+							"eventPath": "",
+							"connectionType": "mqtt",
+							"qualifier": {
+								"qos": 0,
+								"namedRoot": false,
+								"retained": false,
+								"breakupArrays": false,
+								"topic": "_test_avro_writer/2_register_schema"
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					},
+					{
+						"name": "register_schema",
+						"display": {
+							"position": {
+								"x": 690,
+								"y": 67
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".ReadConfig",
+							"failureOutputs": [],
+							"reference": {
+								"type": "Input",
+								"name": "registerSchema",
+								"path": "",
+								"params": {
+									"requestBody": "{{event.value}}"
+								},
+								"connectionName": "schema_registry"
+							},
+							"handleGoodNoData": false,
+							"goodNoDataOutputs": []
+						},
+						"outputs": [
+							"mqtt_register_schema",
+							"encoder"
+						]
+					},
+					{
+						"name": "write_kafka",
+						"display": {
+							"position": {
+								"x": 1590,
+								"y": 202
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".DynamicWriteConfig",
+							"failureOutputs": [],
+							"connectionReference": "{{Connection.kafka}}",
+							"eventPath": "",
+							"connectionType": "kafka",
+							"qualifier": {
+								"topic": "test",
+								"key": "{{event.metadata.payload.device_id}}",
+								"breakupArrays": false
+							},
+							"qualifierExpression": "",
+							"writeReturn": "ignore"
+						},
+						"outputs": []
+					}
+				],
+				"trackActivity": false,
+				"queueSize": 10000,
+				"triggers": [
+					{
+						"name": "PolledTrigger",
+						"display": {
+							"position": {
+								"x": -450,
+								"y": 0
+							}
+						},
+						"description": "",
+						"config": {
+							"type": ".TriggerPolled",
+							"enabled": true,
+							"interval": {
+								"duration": 1,
+								"units": "Minutes"
+							},
+							"mode": "interval"
+						}
+					}
+				],
+				"errorHandler": {
+					"type": "default"
+				}
+			}
+		],
+		"namespace": [],
+		"lookupMap": [],
+		"servers": {
+			"i3x": {
+				"historyReadPipeline": {
+					"type": "Empty"
+				},
+				"writePipeline": {
+					"type": "Empty"
+				}
+			}
+		}
+	},
+	"network": {
+		"groups": [],
+		"hubs": []
+	}
+}
