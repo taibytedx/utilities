@@ -1,5 +1,11 @@
 {$DOMAIN} {
 
+    tls {
+        issuer acme {
+            profile shortlived
+        }
+    }
+
     @central8885 path /central/mcp* /central/i3x* /central/data*
     handle @central8885 {
         uri strip_prefix /central
