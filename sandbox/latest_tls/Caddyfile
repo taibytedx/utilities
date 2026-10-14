@@ -1,3 +1,9 @@
+{
+    # NOTE: default_sni does not support {$DOMAIN}-style placeholders — this
+    # must be kept in sync with DOMAIN in .env manually if that value changes.
+    default_sni {$DOMAIN}
+}
+
 {$DOMAIN} {
 
     tls {
