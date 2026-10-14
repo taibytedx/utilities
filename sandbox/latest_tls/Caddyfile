@@ -1,16 +1,4 @@
-{
-    # NOTE: default_sni does not support {$DOMAIN}-style placeholders — this
-    # must be kept in sync with DOMAIN in .env manually if that value changes.
-    default_sni {$DOMAIN}
-}
-
 {$DOMAIN} {
-
-    tls {
-        issuer acme {
-            profile shortlived
-        }
-    }
 
     @central8885 path /central/mcp* /central/i3x* /central/data*
     handle @central8885 {
