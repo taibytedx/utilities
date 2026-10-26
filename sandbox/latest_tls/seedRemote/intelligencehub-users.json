@@ -1,0 +1,49 @@
+{
+  "productInfo" : {
+    "company" : "HighByte",
+    "product" : "IntelligenceHub",
+    "version" : "4.5.0",
+    "build" : "2026.8.7.376",
+    "stage" : "Alpha"
+  },
+  "roles" : [ {
+    "name" : "admin",
+    "policyVersion" : 1,
+    "claims" : [ {
+      "resources" : [ "*" ],
+      "actions" : [ "*" ]
+    } ],
+    "aliases" : [ ]
+  }, {
+    "name" : "default",
+    "policyVersion" : 1,
+    "claims" : [ {
+      "resources" : [ "*" ],
+      "actions" : [ "read" ]
+    }, {
+      "resources" : [ "connection", "instance", "pipeline" ],
+      "actions" : [ "*" ]
+    } ],
+    "aliases" : [ ]
+  } ],
+  "users" : [ {
+    "name" : "administrator",
+    "credentials" : {
+      "salt" : "ZS3vKPaLRGdd4j4AG8Fdxg==",
+      "hashedPassword" : "DFFIVUschqEybD4CYeglbH2hs3suNyTLz8igDhY//XMwSTWp6QIGA9Z0mQh341CwYVMumvq3dnhxQ/F03e7Ldg=="
+    },
+    "policyVersion" : 1,
+    "claims" : [ ],
+    "roles" : [ "admin" ]
+  }, {
+    "name" : "nibbler",
+    "credentials" : {
+      "salt" : "ZS3vKPaLRGdd4j4AG8Fdxg==",
+      "hashedPassword" : "DFFIVUschqEybD4CYeglbH2hs3suNyTLz8igDhY//XMwSTWp6QIGA9Z0mQh341CwYVMumvq3dnhxQ/F03e7Ldg=="
+    },
+    "policyVersion" : 1,
+    "claims" : [ ],
+    "roles" : [ "admin" ]
+  } ],
+  "apiKeys" : [ ]
+}

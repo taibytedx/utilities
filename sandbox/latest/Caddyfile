@@ -1,4 +1,4 @@
-:80 {
+{$DOMAIN} {
 
     @central8885 path /central/mcp* /central/i3x* /central/data*
     handle @central8885 {
@@ -58,8 +58,8 @@
     redir /lgtm /lgtm/ 308
     handle /lgtm/* {
         reverse_proxy lgtm:3000 {
-            header_up X-Forwarded-Port 49995
-            header_up X-Forwarded-Proto http
+            header_up X-Forwarded-Port 443
+            header_up X-Forwarded-Proto https
         }
     }
 }
