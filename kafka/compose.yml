@@ -1,7 +1,7 @@
 services:
   kafka:
     image: apache/kafka:3.8.0
-    container_name: kafka
+    #container_name: kafka
     ports:
       - "9092:9092"
     environment:
@@ -19,7 +19,7 @@ services:
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.6.0
-    container_name: schema-registry
+    #container_name: schema-registry
     depends_on:
       - kafka
     ports:
@@ -30,9 +30,22 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
     networks:
       - kafka-net
-
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:v1.0.0   # pin to a specific release
+    #container_name: kafka-ui
+    depends_on:
+      - kafka
+      - schema-registry
+    ports:
+      - "8086:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9094
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+    networks:
+      - kafka-net
   ihub:
-    image: highbyte/intelligence-hub:4.5.1
+    image: highbyte/intelligence-hub:latest
     depends_on:
       init-ih:
         condition: service_completed_successfully
